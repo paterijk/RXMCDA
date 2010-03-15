@@ -1,0 +1,39 @@
+## Namespace for RXMCDA
+
+## Generics and functions defined in this package
+export(
+		"getNumericValue",
+       "getNumberOfCriteria",
+       "getCriteriaIDs",
+       "getNumberOfAlternatives",
+       "getAlternativesIDs",
+       "getParameters",
+       "getPerformanceTables",
+       "getCriteriaComparisons",
+       "getCriteriaPairsComparisons",
+       "getAlternativesComparisons",
+       "getCriteriaValues",
+       "getCriteriaIntervalValues",
+       "getCriteriaPairsValues",
+       "getCriteriaPairsIntervalValues",
+       "getAlternativesValues",
+       "getAlternativesIntervalValues",
+       "putCriteriaValues",
+       "putCriteriaPairsValues",
+       "putAlternativesValues",
+       "putErrorMessage",
+       "putLogMessage",
+       "putMessage",
+       "getAlternativesComparisonsLabels",
+       "putCriteriaPlot",
+       "putAlternativesPlot",
+       "putCriterionValue",
+       "checkXSD",
+       "getCriteriaComparisonsLabels",
+       "putAlternativeValue",
+       "putAlternativesComparisonsLabels", 
+       "putCapacity",
+       "getMobiusCapacities"
+       )
+
+
