@@ -2353,3 +2353,60 @@ putCapacity<- function(tree, capacity, criteriaIDs, mcdaConcept = NULL){
 	return(out)
 }
 
+putPerformanceTable <- function(tree, performanceTable, mcdaConcept = NULL){
+	out<-list()
+	err1<-NULL
+	err2<-NULL
+	racine<-NULL
+	
+	# we first check if there is an <xmcda:XMCDA>
+	
+	tmpErr<-try(
+			{
+				racine<-getNodeSet(tree, "//xmcda:XMCDA")
+			}
+	)
+	if (inherits(tmpErr, 'try-error')){
+		err1<-"No <xmcda:XMCDA> found."
+	}
+	
+	if (length(racine)!=0){
+		
+		
+		if (!is.null(mcdaConcept)){
+			perfTab<-newXMLNode("performanceTable", attrs = c(mcdaConcept=mcdaConcept), parent=racine[[1]])
+			
+		}
+		else{
+			
+			perfTab<-newXMLNode("performanceTable", parent=racine[[1]])
+			
+		}
+		for (i in 1:dim(performanceTable)[1]){
+			tmpErr<-try(
+					{
+						altPerf<-newXMLNode("alternativePerformances", parent=perfTab)
+						newXMLNode("alternativeID", rownames(performanceTable)[i], parent=altPerf)
+						for (j in 1:dim(performanceTable)[2]){
+							perf<-newXMLNode("performance", parent=altPerf)
+							newXMLNode("criterionID", colnames(performanceTable)[j], parent=perf)
+							val<-newXMLNode("value", parent=perf)
+							newXMLNode("real", performanceTable[i,j], parent=val)
+						}
+					}
+			)
+			if (inherits(tmpErr, 'try-error')){
+				err2<-"Impossible to put (a) value(s) in a <performanceTable>."
+			}
+		}	
+	}
+	if (!is.null(err1)|(!is.null(err2))){
+		out<-c(out,list(status=c(err1,err2)))
+	}
+	else{
+		out<-c(out,list(status="OK"))
+	}
+	return(out)
+}
+
+
