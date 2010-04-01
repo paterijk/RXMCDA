@@ -2409,4 +2409,62 @@ putPerformanceTable <- function(tree, performanceTable, mcdaConcept = NULL){
 	return(out)
 }
 
+putPointsCriterionFunction <- function(tree, points, mcdaConcept = NULL){
+	out<-list()
+	err1<-NULL
+	err2<-NULL
+	racine<-NULL
+	
+	# we first check if there is an <xmcda:XMCDA>
+	
+	tmpErr<-try(
+			{
+				racine<-getNodeSet(tree, "//xmcda:XMCDA")
+			}
+	)
+	if (inherits(tmpErr, 'try-error')){
+		err1<-"No <xmcda:XMCDA> found."
+	}
+	
+	if (length(racine)!=0){
+		
+		
+		if (!is.null(mcdaConcept)){
+			criteria<-newXMLNode("criteria", attrs = c(mcdaConcept=mcdaConcept), parent=racine[[1]])
+			
+		}
+		else{
+			
+			criteria<-newXMLNode("criteria", parent=racine[[1]])
+			
+		}
+		for (i in 1:length(points)){
+			tmpErr<-try(
+					{
+						criterion <- newXMLNode("criterion", attrs=c(id=names(points)[i]), parent=criteria)
+						criterionFunction <- newXMLNode("criterionFunction", parent=criterion)
+						pts <- newXMLNode("points", parent=criterionFunction)
+						for (j in 1:dim(points[[i]])[1]){
+							pt <- newXMLNode("point", parent=pts)
+							abs <- newXMLNode("abscissa", parent=pt)
+							newXMLNode("real", points[[i]][j,1], parent=abs)
+							ord <- newXMLNode("ordinate", parent=pt)
+							newXMLNode("real", points[[i]][j,2], parent=ord)
+						}
+					}
+			)
+			if (inherits(tmpErr, 'try-error')){
+				err2<-"Impossible to put (a) value(s) in a <criterionFunction>."
+			}
+		}	
+	}
+	if (!is.null(err1)|(!is.null(err2))){
+		out<-c(out,list(status=c(err1,err2)))
+	}
+	else{
+		out<-c(out,list(status="OK"))
+	}
+	return(out)
+}
+
 
