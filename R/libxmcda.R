@@ -40,7 +40,7 @@
 
 checkXSD <- function(tree){
 	
-	xsd <- xmlTreeParse("http://sma.uni.lu/d2cms/xmcda/_downloads/XMCDA-2.0.0.xsd", isSchema =TRUE, useInternal = TRUE)
+	xsd <- xmlTreeParse("http://www.decision-deck.org/xmcda/_downloads/XMCDA-2.0.0.xsd", isSchema =TRUE, useInternal = TRUE)
 	
 	if (xmlSchemaValidate(xsd,tree)$status != 0)
 		return(0)
