@@ -1963,8 +1963,15 @@ putAlternativesComparisonsLabels <-function(tree, alternativesComparisons, mcdaC
 						newXMLNode("alternativeID", alternativesComparisons[i,1], parent = initial)
 						terminal<-newXMLNode("terminal", parent=pair)
 						newXMLNode("alternativeID", alternativesComparisons[i,2], parent = terminal)
-						val<-newXMLNode("value", parent = pair)
-						newXMLNode("real",alternativesComparisons[i,3], parent=val)
+						if (dim(alternativesComparisons)[2] > 2)
+						{
+							val<-newXMLNode("value", parent = pair)
+							if (is.na(alternativesComparisons[i,3])){
+								newXMLNode("NA",alternativesComparisons[i,3], parent=val)
+							}
+							else
+								newXMLNode("real",alternativesComparisons[i,3], parent=val)
+						}
 					}
 			)
 			if (inherits(tmpErr, 'try-error')){
