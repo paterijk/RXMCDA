@@ -29,9 +29,9 @@ newXMLNode("xmcda:XMCDA", namespace = c("xsi" = "http://www.w3.org/2001/XMLSchem
 
 root<-getNodeSet(tree, "/xmcda:XMCDA")
 
-criteria<-newXMLNode("criteria", parent=root[[1]])
+criteria<-newXMLNode("criteria", parent=root[[1]], namespace=c())
 
-criterion<-newXMLNode("criterion",attrs = c(id="g1"), parent=criteria)
+criterion<-newXMLNode("criterion",attrs = c(id="g1"), parent=criteria, namespace=c())
 
 y<-getNodeSet(tree,"//criteria")
 

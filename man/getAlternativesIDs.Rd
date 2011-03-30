@@ -29,11 +29,11 @@ newXMLNode("xmcda:XMCDA", namespace = c("xsi" = "http://www.w3.org/2001/XMLSchem
 
 root<-getNodeSet(tree, "/xmcda:XMCDA")
 
-alternatives<-newXMLNode("alternatives", attrs=c(mcdaConcept="actions"), parent=root[[1]])
+alternatives<-newXMLNode("alternatives", attrs=c(mcdaConcept="actions"), parent=root[[1]], namespace=c())
 
-alternative<-newXMLNode("alternative",attrs = c(id="x1"), parent=alternatives)
-alternative<-newXMLNode("alternative",attrs = c(id="x2"), parent=alternatives)
-alternative<-newXMLNode("alternative",attrs = c(id="x3"), parent=alternatives)
+alternative<-newXMLNode("alternative",attrs = c(id="x1"), parent=alternatives, namespace=c())
+alternative<-newXMLNode("alternative",attrs = c(id="x2"), parent=alternatives, namespace=c())
+alternative<-newXMLNode("alternative",attrs = c(id="x3"), parent=alternatives, namespace=c())
 
 y<-getNodeSet(tree,"//alternatives")
 

@@ -26,5 +26,13 @@ getCriteriaPairsValues(tree, criteriaIDs, mcdaConcept = NULL)
   \item{status}{Either OK if all the \code{<criteriaValues>} tags could be correctly read, or the description of the error.}
 }
 
+\examples{
+tree <- xmlTreeParse(system.file("data","testFile.xml",package="RXMCDA"), useInternalNodes=TRUE)
+
+critIDs <- getCriteriaIDs(tree)
+
+pairsVals <- getCriteriaPairsValues(tree, critIDs[[1]],mcdaConcept="interactionValues")
+}
+
 \keyword{methods}
 %\keyword{ ~~ other possible keyword(s)}

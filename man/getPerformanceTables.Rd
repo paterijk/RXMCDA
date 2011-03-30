@@ -26,5 +26,11 @@ getPerformanceTables(tree, altIDs = NULL, critIDs = NULL, mcdaConcept = NULL)
   \item{status}{Either OK if all the \code{<performanceTable>} tags could be correctly read, or the description of the error.}
 }
 
+\examples{
+tree <- xmlTreeParse(system.file("data","testFile.xml",package="RXMCDA"), useInternalNodes=TRUE)
+
+tables <- getPerformanceTables(tree)
+}
+
 \keyword{methods}
 %\keyword{ ~~ other possible keyword(s)}

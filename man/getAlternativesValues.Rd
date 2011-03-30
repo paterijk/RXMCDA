@@ -26,5 +26,13 @@ getAlternativesValues(tree, alternativesIDs, mcdaConcept = NULL)
   \item{status}{Either OK if all the \code{<alternativesValues>} tags could be correctly read, or the description of the error.}
 }
 
+\examples{
+tree <- xmlTreeParse(system.file("data","testFile.xml",package="RXMCDA"), useInternalNodes=TRUE)
+
+altIDs <- getAlternativesIDs(tree)
+
+altVals <- getAlternativesValues(tree, altIDs[[1]])
+}
+
 \keyword{methods}
 %\keyword{ ~~ other possible keyword(s)}

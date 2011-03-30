@@ -29,23 +29,23 @@ getAlternativesComparisonsLabels(tree, altIDs=NULL, mcdaConcept = NULL)
 \examples{
 tree = newXMLDoc()
 
-newXMLNode("xmcda:XMCDA", namespace = c("xsi" = "http://www.w3.org/2001/XMLSchema-instance", "xmcda" = "http://www.decision-deck.org/2009/XMCDA-2.0.0"), parent=tree)
+newXMLNode("xmcda:XMCDA", namespace = c("xsi" = "http://www.w3.org/2001/XMLSchema-instance", "xmcda" = "http://www.decision-deck.org/2009/XMCDA-2.1.0"), parent=tree)
 
 root<-getNodeSet(tree, "/xmcda:XMCDA")
 
-aC<-newXMLNode("alternativesComparisons", parent=root[[1]])
+aC<-newXMLNode("alternativesComparisons", parent=root[[1]], namespace=c())
 
-pairs<-newXMLNode("pairs", parent=aC)
-pair<-newXMLNode("pair", parent=pairs)
+pairs<-newXMLNode("pairs", parent=aC, namespace=c())
+pair<-newXMLNode("pair", parent=pairs, namespace=c())
 
-initial<-newXMLNode("initial", parent=pair)
-newXMLNode("alternativeID", "a01", parent=initial)
+initial<-newXMLNode("initial", parent=pair, namespace=c())
+newXMLNode("alternativeID", "a01", parent=initial, namespace=c())
 
-terminal<-newXMLNode("terminal", parent=pair)
-newXMLNode("alternativeID", "a02", parent=terminal)
+terminal<-newXMLNode("terminal", parent=pair, namespace=c())
+newXMLNode("alternativeID", "a02", parent=terminal, namespace=c())
 
-value<-newXMLNode("value", parent=pair)
-newXMLNode("real", "0.5", parent=value)
+value<-newXMLNode("value", parent=pair, namespace=c())
+newXMLNode("real", "0.5", parent=value, namespace=c())
 
 alternativesIDs <- c("a01","a02")
 

@@ -27,6 +27,11 @@ getMobiusCapacities(tree, criteriaIDs, numberOfCriteria, kadditivity, mcdaConcep
 }
 
 \examples{
+tree <- xmlTreeParse(system.file("data","testFile.xml",package="RXMCDA"), useInternalNodes=TRUE)
+
+critIDs <- getCriteriaIDs(tree)
+
+capa <- getMobiusCapacities(tree, critIDs[[1]], 5, 5, mcdaConcept="mobiusCapacity")
 }
 
 \keyword{methods}

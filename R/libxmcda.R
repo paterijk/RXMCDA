@@ -40,7 +40,23 @@
 
 checkXSD <- function(tree){
 	
-	xsd <- xmlTreeParse("http://www.decision-deck.org/xmcda/_downloads/XMCDA-2.0.0.xsd", isSchema =TRUE, useInternal = TRUE)
+	# get the namespaces defined in tree
+	
+	namespaces<-xmlNamespaces(tree, simplify=TRUE)
+	
+	# search for namespaces containing XMCDA-2.*
+	
+	i <- grep("XMCDA-2.",namespaces)
+	
+	xsdLocations <- c("http://www.decision-deck.org/2009/XMCDA-2.0.0" = "http://www.decision-deck.org/xmcda/_downloads/XMCDA-2.0.0.xsd", "http://www.decision-deck.org/2009/XMCDA-2.1.0" = "http://www.decision-deck.org/xmcda/_downloads/XMCDA-2.1.0.xsd")
+
+	if (!is.na(xsdLocations[namespaces[i[1]]])){
+
+		xsd <- xmlTreeParse(xsdLocations[namespaces[i[1]]], isSchema =TRUE, useInternal = TRUE)
+	}else{
+
+		xsd <- xmlTreeParse("http://www.decision-deck.org/xmcda/_downloads/XMCDA-2.1.0.xsd", isSchema =TRUE, useInternal = TRUE)
+	}
 	
 	if (xmlSchemaValidate(xsd,tree)$status != 0)
 		return(0)
@@ -1511,32 +1527,32 @@ putCriteriaValues <- function(tree, criteriaValues, criteriaIDs, mcdaConcept = N
 	
 	tmpErr<-try(
 			{
-				racine<-getNodeSet(tree, "//xmcda:XMCDA")
+				racine<-xmlRoot(tree)
 			}
 	)
 	if (inherits(tmpErr, 'try-error')){
-		err1<-"No <xmcda:XMCDA> found."
+		err1<-"No root tag found."
 	}
 	
 	if (length(racine)!=0){
 		
 		
 		if (!is.null(mcdaConcept)){
-			critVals<-newXMLNode("criteriaValues", attrs = c(mcdaConcept=mcdaConcept), parent=racine[[1]])
+			critVals<-newXMLNode("criteriaValues", attrs = c(mcdaConcept=mcdaConcept), parent=racine, namespace=c())
 			
 		}
 		else{
 			
-			critVals<-newXMLNode("criteriaValues", parent=racine[[1]])
+			critVals<-newXMLNode("criteriaValues", parent=racine, namespace=c())
 			
 		}
 		for (i in 1:dim(criteriaValues)[1]){
 			tmpErr<-try(
 					{
-						critVal<-newXMLNode("criterionValue", parent=critVals)
-						newXMLNode("criterionID", criteriaIDs[criteriaValues[i,1]], parent = critVal)
-						val<-newXMLNode("value", parent = critVal)
-						newXMLNode("real",criteriaValues[i,2], parent=val)
+						critVal<-newXMLNode("criterionValue", parent=critVals, namespace=c())
+						newXMLNode("criterionID", criteriaIDs[criteriaValues[i,1]], parent = critVal, namespace=c())
+						val<-newXMLNode("value", parent = critVal, namespace=c())
+						newXMLNode("real",criteriaValues[i,2], parent=val, namespace=c())
 					}
 			)
 			if (inherits(tmpErr, 'try-error')){
@@ -1564,7 +1580,7 @@ putCriterionValue <- function(tree, criterionValue, criteriaIDs = NULL, mcdaConc
 	
 	tmpErr<-try(
 			{
-				racine<-getNodeSet(tree, "//xmcda:XMCDA")
+				racine<-xmlRoot(tree)
 			}
 	)
 	if (inherits(tmpErr, 'try-error')){
@@ -1575,29 +1591,29 @@ putCriterionValue <- function(tree, criterionValue, criteriaIDs = NULL, mcdaConc
 		
 		
 		if (!is.null(mcdaConcept)){
-			critVals<-newXMLNode("criterionValue", attrs = c(mcdaConcept=mcdaConcept), parent=racine[[1]])
+			critVals<-newXMLNode("criterionValue", attrs = c(mcdaConcept=mcdaConcept), parent=racine, namespace=c())
 			
 		}
 		else{
 			
-			critVals<-newXMLNode("criterionValue", parent=racine[[1]])
+			critVals<-newXMLNode("criterionValue", parent=racine, namespace=c())
 		}
 		tmpErr<-try(
 				{
 					if (!is.null(criteriaIDs)){
 						if (length(criteriaIDs) == 1){
-							newXMLNode("criterionID", criteriaIDs, parent = critVals)
+							newXMLNode("criterionID", criteriaIDs, parent = critVals, namespace=c())
 						}
 						else{
-							critSet<-newXMLNode("criteriaSet", parent=critVals)
+							critSet<-newXMLNode("criteriaSet", parent=critVals, namespace=c())
 							for (i in 1:length(criteriaIDs)){
-								element<-newXMLNode("element", parent=critSet)
-								newXMLNode("criterionID", criteriaIDs[i], parent = element)
+								element<-newXMLNode("element", parent=critSet, namespace=c())
+								newXMLNode("criterionID", criteriaIDs[i], parent = element, namespace=c())
 							}
 						}
 					}
-					val<-newXMLNode("value", parent = critVals)
-					newXMLNode("real",criterionValue, parent=val)
+					val<-newXMLNode("value", parent = critVals, namespace=c())
+					newXMLNode("real",criterionValue, parent=val, namespace=c())
 				}
 		)
 		if (inherits(tmpErr, 'try-error')){
@@ -1624,7 +1640,7 @@ putCriteriaPlot <- function(tree, base64plot, criteriaIDs, mcdaConcept=NULL, nam
 	
 	tmpErr<-try(
 			{
-				racine<-getNodeSet(tree, "//xmcda:XMCDA")
+				racine<-xmlRoot(tree)
 			}
 	)
 	if (inherits(tmpErr, 'try-error')){
@@ -1635,35 +1651,35 @@ putCriteriaPlot <- function(tree, base64plot, criteriaIDs, mcdaConcept=NULL, nam
 		
 		if ((is.null(mcdaConcept))&(is.null(name)))
 		{
-			critVal<-newXMLNode("criterionValue", parent=racine[[1]])
+			critVal<-newXMLNode("criterionValue", parent=racine, namespace=c())
 		}
 		else if (is.null(mcdaConcept))
 		{
-			critVal<-newXMLNode("criterionValue", attrs = c(name=name), parent=racine[[1]])
+			critVal<-newXMLNode("criterionValue", attrs = c(name=name), parent=racine, namespace=c())
 		}
 		else if (is.null(name))
 		{
-			critVal<-newXMLNode("criterionValue", attrs = c(mcdaConcept=mcdaConcept), parent=racine[[1]])
+			critVal<-newXMLNode("criterionValue", attrs = c(mcdaConcept=mcdaConcept), parent=racine, namespace=c())
 		}
 		else
 		{
-			critVal<-newXMLNode("criterionValue", attrs = c(mcdaConcept=mcdaConcept, name=name), parent=racine[[1]])
+			critVal<-newXMLNode("criterionValue", attrs = c(mcdaConcept=mcdaConcept, name=name), parent=racine, namespace=c())
 		}
 		
 #		if (is.null(mcdaConcept))
-#			critVal<-newXMLNode("criterionValue", attrs = c(name=name), parent=racine[[1]])
+#			critVal<-newXMLNode("criterionValue", attrs = c(name=name), parent=racine, namespace=c())
 #		else
-#			critVal<-newXMLNode("criterionValue", attrs = c(mcdaConcept=mcdaConcept, name=name), parent=racine[[1]])
+#			critVal<-newXMLNode("criterionValue", attrs = c(mcdaConcept=mcdaConcept, name=name), parent=racine, namespace=c())
 		
 		tmpErr<-try(
 				{
-					critSet<-newXMLNode("criteriaSet", parent=critVal)
+					critSet<-newXMLNode("criteriaSet", parent=critVal, namespace=c())
 					for (i in 1:length(criteriaIDs)){
-						element<-newXMLNode("element", parent=critSet)
-						newXMLNode("criterionID", criteriaIDs[i], parent = element)
+						element<-newXMLNode("element", parent=critSet, namespace=c())
+						newXMLNode("criterionID", criteriaIDs[i], parent = element, namespace=c())
 					}
-					val<-newXMLNode("value", parent = critVal)
-					newXMLNode("image",base64plot, parent=val)
+					val<-newXMLNode("value", parent = critVal, namespace=c())
+					newXMLNode("image",base64plot, parent=val, namespace=c())
 				}
 		)
 		if (inherits(tmpErr, 'try-error')){
@@ -1691,7 +1707,7 @@ putAlternativesPlot <- function(tree, base64plot, alternativesIDs, mcdaConcept=N
 	
 	tmpErr<-try(
 			{
-				racine<-getNodeSet(tree, "//xmcda:XMCDA")
+				racine<-xmlRoot(tree)
 			}
 	)
 	if (inherits(tmpErr, 'try-error')){
@@ -1702,40 +1718,40 @@ putAlternativesPlot <- function(tree, base64plot, alternativesIDs, mcdaConcept=N
 		
 		if ((is.null(mcdaConcept))&(is.null(name)))
 		{
-			critVal<-newXMLNode("alternativeValue", parent=racine[[1]])
+			critVal<-newXMLNode("alternativeValue", parent=racine, namespace=c())
 		}
 		else if (is.null(mcdaConcept))
 		{
-			critVal<-newXMLNode("alternativeValue", attrs = c(name=name), parent=racine[[1]])
+			critVal<-newXMLNode("alternativeValue", attrs = c(name=name), parent=racine, namespace=c())
 		}
 		else if (is.null(name))
 		{
-			critVal<-newXMLNode("alternativeValue", attrs = c(mcdaConcept=mcdaConcept), parent=racine[[1]])
+			critVal<-newXMLNode("alternativeValue", attrs = c(mcdaConcept=mcdaConcept), parent=racine, namespace=c())
 		}
 		else
 		{
-			critVal<-newXMLNode("alternativeValue", attrs = c(mcdaConcept=mcdaConcept, name=name), parent=racine[[1]])
+			critVal<-newXMLNode("alternativeValue", attrs = c(mcdaConcept=mcdaConcept, name=name), parent=racine, namespace=c())
 		}
 		
 		
 #		if (is.null(mcdaConcept)){
-#			critVal<-newXMLNode("alternativeValue", attrs = c(name=name), parent=racine[[1]])
+#			critVal<-newXMLNode("alternativeValue", attrs = c(name=name), parent=racine, namespace=c())
 #		}
 #		else
 #		{
-#			critVal<-newXMLNode("alternativeValue", attrs = c(mcdaConcept=mcdaConcept, name=name), parent=racine[[1]])	
+#			critVal<-newXMLNode("alternativeValue", attrs = c(mcdaConcept=mcdaConcept, name=name), parent=racine, namespace=c())	
 #		}
 		
 		
 		tmpErr<-try(
 				{
-					critSet<-newXMLNode("alternativesSet", parent=critVal)
+					critSet<-newXMLNode("alternativesSet", parent=critVal, namespace=c())
 					for (i in 1:length(alternativesIDs)){
-						element<-newXMLNode("element", parent=critSet)
-						newXMLNode("alternativeID", alternativesIDs[i], parent = element)
+						element<-newXMLNode("element", parent=critSet, namespace=c())
+						newXMLNode("alternativeID", alternativesIDs[i], parent = element, namespace=c())
 					}
-					val<-newXMLNode("value", parent = critVal)
-					newXMLNode("image",base64plot, parent=val)
+					val<-newXMLNode("value", parent = critVal, namespace=c())
+					newXMLNode("image",base64plot, parent=val, namespace=c())
 				}
 		)
 		if (inherits(tmpErr, 'try-error')){
@@ -1763,7 +1779,7 @@ putCriteriaPairsValues <- function(tree, criteriaPairsValues, criteriaIDs, mcdaC
 	
 	tmpErr<-try(
 			{
-				racine<-getNodeSet(tree, "//xmcda:XMCDA")
+				racine<-xmlRoot(tree)
 			}
 	)
 	if (inherits(tmpErr, 'try-error')){
@@ -1774,25 +1790,25 @@ putCriteriaPairsValues <- function(tree, criteriaPairsValues, criteriaIDs, mcdaC
 		
 		
 		if (!is.null(mcdaConcept)){
-			critVals<-newXMLNode("criteriaValues", attrs = c(mcdaConcept=mcdaConcept), parent=racine[[1]])
+			critVals<-newXMLNode("criteriaValues", attrs = c(mcdaConcept=mcdaConcept), parent=racine, namespace=c())
 			
 		}
 		else{
 			
-			critVals<-newXMLNode("criteriaValues", parent=racine[[1]])
+			critVals<-newXMLNode("criteriaValues", parent=racine, namespace=c())
 			
 		}
 		for (i in 1:dim(criteriaPairsValues)[1]){
 			tmpErr<-try(
 					{
-						critVal<-newXMLNode("criterionValue", parent=critVals)
-						critSet<-newXMLNode("criteriaSet", parent=critVal)
-						element<-newXMLNode("element", parent=critSet)
-						newXMLNode("criterionID", criteriaIDs[criteriaPairsValues[i,1]], parent = element)
-						element<-newXMLNode("element", parent=critSet)
-						newXMLNode("criterionID", criteriaIDs[criteriaPairsValues[i,2]], parent = element)
-						val<-newXMLNode("value", parent = critVal)
-						newXMLNode("real",criteriaPairsValues[i,3], parent=val)
+						critVal<-newXMLNode("criterionValue", parent=critVals, namespace=c())
+						critSet<-newXMLNode("criteriaSet", parent=critVal, namespace=c())
+						element<-newXMLNode("element", parent=critSet, namespace=c())
+						newXMLNode("criterionID", criteriaIDs[criteriaPairsValues[i,1]], parent = element, namespace=c())
+						element<-newXMLNode("element", parent=critSet, namespace=c())
+						newXMLNode("criterionID", criteriaIDs[criteriaPairsValues[i,2]], parent = element, namespace=c())
+						val<-newXMLNode("value", parent = critVal, namespace=c())
+						newXMLNode("real",criteriaPairsValues[i,3], parent=val, namespace=c())
 					}
 			)
 			if (inherits(tmpErr, 'try-error')){
@@ -1821,7 +1837,7 @@ putAlternativesValues <- function(tree, alternativesValues, alternativesIDs, mcd
 	
 	tmpErr<-try(
 			{
-				racine<-getNodeSet(tree, "//xmcda:XMCDA")
+				racine<-xmlRoot(tree)
 			}
 	)
 	if (inherits(tmpErr, 'try-error')){
@@ -1832,21 +1848,21 @@ putAlternativesValues <- function(tree, alternativesValues, alternativesIDs, mcd
 		
 		
 		if (!is.null(mcdaConcept)){
-			altVals<-newXMLNode("alternativesValues", attrs = c(mcdaConcept=mcdaConcept), parent=racine[[1]])
+			altVals<-newXMLNode("alternativesValues", attrs = c(mcdaConcept=mcdaConcept), parent=racine, namespace=c())
 			
 		}
 		else{
 			
-			altVals<-newXMLNode("alternativesValues", parent=racine[[1]])
+			altVals<-newXMLNode("alternativesValues", parent=racine, namespace=c())
 			
 		}
 		for (i in 1:dim(alternativesValues)[1]){
 			tmpErr<-try(
 					{
-						altVal<-newXMLNode("alternativeValue", parent=altVals)
-						newXMLNode("alternativeID", alternativesIDs[alternativesValues[i,1]], parent = altVal)
-						val<-newXMLNode("value", parent = altVal)
-						newXMLNode("real",alternativesValues[i,2], parent=val)
+						altVal<-newXMLNode("alternativeValue", parent=altVals, namespace=c())
+						newXMLNode("alternativeID", alternativesIDs[alternativesValues[i,1]], parent = altVal, namespace=c())
+						val<-newXMLNode("value", parent = altVal, namespace=c())
+						newXMLNode("real",alternativesValues[i,2], parent=val, namespace=c())
 					}
 			)
 			if (inherits(tmpErr, 'try-error')){
@@ -1874,7 +1890,7 @@ putAlternativeValue <- function(tree, alternativeValue, alternativesIDs=NULL, mc
 	
 	tmpErr<-try(
 			{
-				racine<-getNodeSet(tree, "//xmcda:XMCDA")
+				racine<-xmlRoot(tree)
 			}
 	)
 	if (inherits(tmpErr, 'try-error')){
@@ -1885,29 +1901,29 @@ putAlternativeValue <- function(tree, alternativeValue, alternativesIDs=NULL, mc
 		
 		
 		if (!is.null(mcdaConcept)){
-			critVals<-newXMLNode("alternativeValue", attrs = c(mcdaConcept=mcdaConcept), parent=racine[[1]])
+			critVals<-newXMLNode("alternativeValue", attrs = c(mcdaConcept=mcdaConcept), parent=racine, namespace=c())
 			
 		}
 		else{
 			
-			critVals<-newXMLNode("alternativeValue", parent=racine[[1]])
+			critVals<-newXMLNode("alternativeValue", parent=racine, namespace=c())
 		}
 		tmpErr<-try(
 				{
 					if (!is.null(alternativesIDs)){
 						if (length(alternativesIDs) == 1){
-							newXMLNode("alternativeID", alternativesIDs, parent = critVals)
+							newXMLNode("alternativeID", alternativesIDs, parent = critVals, namespace=c())
 						}
 						else{
-							critSet<-newXMLNode("alternativesSet", parent=critVals)
+							critSet<-newXMLNode("alternativesSet", parent=critVals, namespace=c())
 							for (i in 1:length(alternativesIDs)){
-								element<-newXMLNode("element", parent=critSet)
-								newXMLNode("alternativeID", alternativesIDs[i], parent = element)
+								element<-newXMLNode("element", parent=critSet, namespace=c())
+								newXMLNode("alternativeID", alternativesIDs[i], parent = element, namespace=c())
 							}
 						}
 					}
-					val<-newXMLNode("value", parent = critVals)
-					newXMLNode("real",alternativeValue, parent=val)
+					val<-newXMLNode("value", parent = critVals, namespace=c())
+					newXMLNode("real",alternativeValue, parent=val, namespace=c())
 				}
 		)
 		if (inherits(tmpErr, 'try-error')){
@@ -1933,7 +1949,7 @@ putAlternativesComparisonsLabels <-function(tree, alternativesComparisons, mcdaC
 	
 	tmpErr<-try(
 			{
-				racine<-getNodeSet(tree, "//xmcda:XMCDA")
+				racine<-xmlRoot(tree)
 			}
 	)
 	if (inherits(tmpErr, 'try-error')){
@@ -1944,33 +1960,33 @@ putAlternativesComparisonsLabels <-function(tree, alternativesComparisons, mcdaC
 		
 		
 		if (!is.null(mcdaConcept)){
-			altVals<-newXMLNode("alternativesComparisons", attrs = c(mcdaConcept=mcdaConcept), parent=racine[[1]])
+			altVals<-newXMLNode("alternativesComparisons", attrs = c(mcdaConcept=mcdaConcept), parent=racine, namespace=c())
 			
 		}
 		else{
 			
-			altVals<-newXMLNode("alternativesComparisons", parent=racine[[1]])
+			altVals<-newXMLNode("alternativesComparisons", parent=racine, namespace=c())
 			
 		}
 		
-		pairs<-newXMLNode("pairs", parent=altVals)
+		pairs<-newXMLNode("pairs", parent=altVals, namespace=c())
 		
 		for (i in 1:dim(alternativesComparisons)[1]){
 			tmpErr<-try(
 					{
-						pair<-newXMLNode("pair", parent=pairs)
-						initial<-newXMLNode("initial", parent=pair)
-						newXMLNode("alternativeID", alternativesComparisons[i,1], parent = initial)
-						terminal<-newXMLNode("terminal", parent=pair)
-						newXMLNode("alternativeID", alternativesComparisons[i,2], parent = terminal)
+						pair<-newXMLNode("pair", parent=pairs, namespace=c())
+						initial<-newXMLNode("initial", parent=pair, namespace=c())
+						newXMLNode("alternativeID", alternativesComparisons[i,1], parent = initial, namespace=c())
+						terminal<-newXMLNode("terminal", parent=pair, namespace=c())
+						newXMLNode("alternativeID", alternativesComparisons[i,2], parent = terminal, namespace=c())
 						if (dim(alternativesComparisons)[2] > 2)
 						{
-							val<-newXMLNode("value", parent = pair)
+							val<-newXMLNode("value", parent = pair, namespace=c())
 							if (is.na(alternativesComparisons[i,3])){
-								newXMLNode("NA",alternativesComparisons[i,3], parent=val)
+								newXMLNode("NA",alternativesComparisons[i,3], parent=val, namespace=c())
 							}
 							else
-								newXMLNode("real",alternativesComparisons[i,3], parent=val)
+								newXMLNode("real",alternativesComparisons[i,3], parent=val, namespace=c())
 						}
 					}
 			)
@@ -2000,7 +2016,7 @@ putErrorMessage <- function(tree, errorMessage, name = NULL){
 	
 	tmpErr<-try(
 			{
-				racine<-getNodeSet(tree, "//xmcda:XMCDA")
+				racine<-xmlRoot(tree)
 			}
 	)
 	if (inherits(tmpErr, 'try-error')){
@@ -2016,24 +2032,24 @@ putErrorMessage <- function(tree, errorMessage, name = NULL){
 		
 		if (length(methMessages)==0){
 			# if no <methodMessages> can be found, create it
-			methMessages<-newXMLNode("methodMessages", parent=racine[[1]])
+			methMessages<-newXMLNode("methodMessages", parent=racine, namespace=c())
 			if (!is.null(name)){
-				methMessage<-newXMLNode("errorMessage", attrs = c(name=name), parent=methMessages)
+				methMessage<-newXMLNode("errorMessage", attrs = c(name=name), parent=methMessages, namespace=c())
 			}
 			else{
-				methMessage<-newXMLNode("errorMessage", parent=methMessages)
+				methMessage<-newXMLNode("errorMessage", parent=methMessages, namespace=c())
 			}
 		}
 		else
 		{
 			if (!is.null(name)){
-				methMessage<-newXMLNode("errorMessage", attrs = c(name=name), parent=methMessages[[1]])
+				methMessage<-newXMLNode("errorMessage", attrs = c(name=name), parent=methMessages[[1]], namespace=c())
 			}
 			else{
-				methMessage<-newXMLNode("errorMessage", parent=methMessages[[1]])
+				methMessage<-newXMLNode("errorMessage", parent=methMessages[[1]], namespace=c())
 			}
 		}
-		newXMLNode("text", errorMessage, parent = methMessage)		
+		newXMLNode("text", errorMessage, parent = methMessage, namespace=c())		
 	}
 	if (!is.null(err1)|(!is.null(err2))){
 		out<-c(out,list(status=c(err1,err2)))
@@ -2055,7 +2071,7 @@ putLogMessage <- function(tree, logMessage, name = NULL){
 	
 	tmpErr<-try(
 			{
-				racine<-getNodeSet(tree, "//xmcda:XMCDA")
+				racine<-xmlRoot(tree)
 			}
 	)
 	if (inherits(tmpErr, 'try-error')){
@@ -2071,24 +2087,24 @@ putLogMessage <- function(tree, logMessage, name = NULL){
 		
 		if (length(methMessages)==0){
 			# if no <methodMessages> can be found, create it
-			methMessages<-newXMLNode("methodMessages", parent=racine[[1]])
+			methMessages<-newXMLNode("methodMessages", parent=racine, namespace=c())
 			if (!is.null(name)){
-				lMessage<-newXMLNode("logMessage", attrs = c(name=name), parent=methMessages)
+				lMessage<-newXMLNode("logMessage", attrs = c(name=name), parent=methMessages, namespace=c())
 			}
 			else{
-				lMessage<-newXMLNode("logMessage", parent=methMessages)
+				lMessage<-newXMLNode("logMessage", parent=methMessages, namespace=c())
 			}
 		}
 		else
 		{
 			if (!is.null(name)){
-				lMessage<-newXMLNode("logMessage", attrs = c(name=name), parent=methMessages[[1]])
+				lMessage<-newXMLNode("logMessage", attrs = c(name=name), parent=methMessages[[1]], namespace=c())
 			}
 			else{
-				lMessage<-newXMLNode("logMessage", parent=methMessages[[1]])
+				lMessage<-newXMLNode("logMessage", parent=methMessages[[1]], namespace=c())
 			}
 		}
-		newXMLNode("text", logMessage, parent = lMessage)		
+		newXMLNode("text", logMessage, parent = lMessage, namespace=c())		
 	}
 	if (!is.null(err1)|(!is.null(err2))){
 		out<-c(out,list(status=c(err1,err2)))
@@ -2111,7 +2127,7 @@ putMessage <- function(tree, message, name = NULL){
 	
 	tmpErr<-try(
 			{
-				racine<-getNodeSet(tree, "//xmcda:XMCDA")
+				racine<-xmlRoot(tree)
 			}
 	)
 	if (inherits(tmpErr, 'try-error')){
@@ -2127,24 +2143,24 @@ putMessage <- function(tree, message, name = NULL){
 		
 		if (length(methMessages)==0){
 			# if no <methodMessages> can be found, create it
-			methMessages<-newXMLNode("methodMessages", parent=racine[[1]])
+			methMessages<-newXMLNode("methodMessages", parent=racine, namespace=c())
 			if (!is.null(name)){
-				lMessage<-newXMLNode("message", attrs = c(name=name), parent=methMessages)
+				lMessage<-newXMLNode("message", attrs = c(name=name), parent=methMessages, namespace=c())
 			}
 			else{
-				lMessage<-newXMLNode("message", parent=methMessages)
+				lMessage<-newXMLNode("message", parent=methMessages, namespace=c())
 			}
 		}
 		else
 		{
 			if (!is.null(name)){
-				lMessage<-newXMLNode("message", attrs = c(name=name), parent=methMessages[[1]])
+				lMessage<-newXMLNode("message", attrs = c(name=name), parent=methMessages[[1]], namespace=c())
 			}
 			else{
-				lMessage<-newXMLNode("message", parent=methMessages[[1]])
+				lMessage<-newXMLNode("message", parent=methMessages[[1]], namespace=c())
 			}
 		}
-		newXMLNode("text", message, parent = lMessage)		
+		newXMLNode("text", message, parent = lMessage, namespace=c())		
 	}
 	if (!is.null(err1)|(!is.null(err2))){
 		out<-c(out,list(status=c(err1,err2)))
@@ -2307,7 +2323,7 @@ putCapacity<- function(tree, capacity, criteriaIDs, mcdaConcept = NULL){
 	
 	tmpErr<-try(
 			{
-				racine<-getNodeSet(tree, "//xmcda:XMCDA")
+				racine<-xmlRoot(tree)
 			}
 	)
 	if (inherits(tmpErr, 'try-error')){
@@ -2318,12 +2334,12 @@ putCapacity<- function(tree, capacity, criteriaIDs, mcdaConcept = NULL){
 		
 		
 		if (!is.null(mcdaConcept)){
-			critVals<-newXMLNode("criteriaValues", attrs = c(mcdaConcept=mcdaConcept), parent=racine[[1]])
+			critVals<-newXMLNode("criteriaValues", attrs = c(mcdaConcept=mcdaConcept), parent=racine, namespace=c())
 			
 		}
 		else{
 			
-			critVals<-newXMLNode("criteriaValues", parent=racine[[1]])
+			critVals<-newXMLNode("criteriaValues", parent=racine, namespace=c())
 			
 		}
 		
@@ -2333,16 +2349,16 @@ putCapacity<- function(tree, capacity, criteriaIDs, mcdaConcept = NULL){
 		for (i in 4:length(subsets.char)){
 			tmpErr<-try(
 					{
-						critVal = newXMLNode("criterionValue", parent = critVals)
-						critSet = newXMLNode("criteriaSet", parent = critVal)
+						critVal = newXMLNode("criterionValue", parent = critVals, namespace=c())
+						critSet = newXMLNode("criteriaSet", parent = critVal, namespace=c())
 						a <- sub('\\{', 'c(', subsets.char[i])
 						b <- eval(parse(text=sub('\\}', ')', a)))
 						for (j in 1:length(b)){
-							elt<-newXMLNode("element",parent=critSet)
-							newXMLNode("criterionID", criteriaIDs[b[j]],parent=elt)
+							elt<-newXMLNode("element",parent=critSet, namespace=c())
+							newXMLNode("criterionID", criteriaIDs[b[j]],parent=elt, namespace=c())
 						}
-						val = newXMLNode("value", parent = critVal)
-						newXMLNode("real",c[i,1], parent=val)
+						val = newXMLNode("value", parent = critVal, namespace=c())
+						newXMLNode("real",c[i,1], parent=val, namespace=c())
 					}
 			)
 			if (inherits(tmpErr, 'try-error')){
@@ -2370,7 +2386,7 @@ putPerformanceTable <- function(tree, performanceTable, mcdaConcept = NULL){
 	
 	tmpErr<-try(
 			{
-				racine<-getNodeSet(tree, "//xmcda:XMCDA")
+				racine<-xmlRoot(tree)
 			}
 	)
 	if (inherits(tmpErr, 'try-error')){
@@ -2381,24 +2397,24 @@ putPerformanceTable <- function(tree, performanceTable, mcdaConcept = NULL){
 		
 		
 		if (!is.null(mcdaConcept)){
-			perfTab<-newXMLNode("performanceTable", attrs = c(mcdaConcept=mcdaConcept), parent=racine[[1]])
+			perfTab<-newXMLNode("performanceTable", attrs = c(mcdaConcept=mcdaConcept), parent=racine, namespace=c())
 			
 		}
 		else{
 			
-			perfTab<-newXMLNode("performanceTable", parent=racine[[1]])
+			perfTab<-newXMLNode("performanceTable", parent=racine, namespace=c())
 			
 		}
 		for (i in 1:dim(performanceTable)[1]){
 			tmpErr<-try(
 					{
-						altPerf<-newXMLNode("alternativePerformances", parent=perfTab)
-						newXMLNode("alternativeID", rownames(performanceTable)[i], parent=altPerf)
+						altPerf<-newXMLNode("alternativePerformances", parent=perfTab, namespace=c())
+						newXMLNode("alternativeID", rownames(performanceTable)[i], parent=altPerf, namespace=c())
 						for (j in 1:dim(performanceTable)[2]){
-							perf<-newXMLNode("performance", parent=altPerf)
-							newXMLNode("criterionID", colnames(performanceTable)[j], parent=perf)
-							val<-newXMLNode("value", parent=perf)
-							newXMLNode("real", performanceTable[i,j], parent=val)
+							perf<-newXMLNode("performance", parent=altPerf, namespace=c())
+							newXMLNode("criterionID", colnames(performanceTable)[j], parent=perf, namespace=c())
+							val<-newXMLNode("value", parent=perf, namespace=c())
+							newXMLNode("real", performanceTable[i,j], parent=val, namespace=c())
 						}
 					}
 			)
@@ -2426,7 +2442,7 @@ putPointsCriterionFunction <- function(tree, points, mcdaConcept = NULL){
 	
 	tmpErr<-try(
 			{
-				racine<-getNodeSet(tree, "//xmcda:XMCDA")
+				racine<-xmlRoot(tree)
 			}
 	)
 	if (inherits(tmpErr, 'try-error')){
@@ -2437,26 +2453,26 @@ putPointsCriterionFunction <- function(tree, points, mcdaConcept = NULL){
 		
 		
 		if (!is.null(mcdaConcept)){
-			criteria<-newXMLNode("criteria", attrs = c(mcdaConcept=mcdaConcept), parent=racine[[1]])
+			criteria<-newXMLNode("criteria", attrs = c(mcdaConcept=mcdaConcept), parent=racine, namespace=c())
 			
 		}
 		else{
 			
-			criteria<-newXMLNode("criteria", parent=racine[[1]])
+			criteria<-newXMLNode("criteria", parent=racine, namespace=c())
 			
 		}
 		for (i in 1:length(points)){
 			tmpErr<-try(
 					{
-						criterion <- newXMLNode("criterion", attrs=c(id=names(points)[i]), parent=criteria)
-						criterionFunction <- newXMLNode("criterionFunction", parent=criterion)
-						pts <- newXMLNode("points", parent=criterionFunction)
+						criterion <- newXMLNode("criterion", attrs=c(id=names(points)[i]), parent=criteria, namespace=c())
+						criterionFunction <- newXMLNode("criterionFunction", parent=criterion, namespace=c())
+						pts <- newXMLNode("points", parent=criterionFunction, namespace=c())
 						for (j in 1:dim(points[[i]])[1]){
-							pt <- newXMLNode("point", parent=pts)
-							abs <- newXMLNode("abscissa", parent=pt)
-							newXMLNode("real", points[[i]][j,1], parent=abs)
-							ord <- newXMLNode("ordinate", parent=pt)
-							newXMLNode("real", points[[i]][j,2], parent=ord)
+							pt <- newXMLNode("point", parent=pts, namespace=c())
+							abs <- newXMLNode("abscissa", parent=pt, namespace=c())
+							newXMLNode("real", points[[i]][j,1], parent=abs, namespace=c())
+							ord <- newXMLNode("ordinate", parent=pt, namespace=c())
+							newXMLNode("real", points[[i]][j,2], parent=ord, namespace=c())
 						}
 					}
 			)

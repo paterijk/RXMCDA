@@ -22,5 +22,17 @@ putAlternativesComparisonsLabels(tree, alternativesComparisons, mcdaConcept = NU
   \item{status}{Either OK if all the \code{<alternativesComparisons>} tags could be correctly put, or the description of the error.}
 }
 
+\examples{
+tree = newXMLDoc()
+
+newXMLNode("xmcda:XMCDA", namespace = c("xsi" = "http://www.w3.org/2001/XMLSchema-instance", "xmcda" = "http://www.decision-deck.org/2009/XMCDA-2.1.0"), parent=tree)
+
+comps <- rbind(c("x", "y", "0.07"), c("y", "z", "0.01"))
+
+altIDs <- c("x","y","z")
+
+putAlternativesComparisonsLabels(tree,comps, mcdaConcept="newComparisons")
+}
+
 \keyword{methods}
 %\keyword{ ~~ other possible keyword(s)}

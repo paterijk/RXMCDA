@@ -24,9 +24,9 @@ newXMLNode("xmcda:XMCDA", namespace = c("xsi" = "http://www.w3.org/2001/XMLSchem
 
 root<-getNodeSet(tree, "/xmcda:XMCDA")
 
-val<-newXMLNode("value", parent=root[[1]])
+val<-newXMLNode("value", parent=root[[1]], namespace=c())
 
-newXMLNode("real",3.14,parent=val)
+newXMLNode("real",3.14,parent=val, namespace=c())
 
 y<-getNodeSet(tree,"//value")
 

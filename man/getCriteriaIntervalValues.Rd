@@ -24,19 +24,12 @@ getCriteriaIntervalValues(tree, criteriaIDs, mcdaConcept = NULL)
 }
 
 \examples{
-tree = newXMLDoc()
+tree <- xmlTreeParse(system.file("data","testFile.xml",package="RXMCDA"), useInternalNodes=TRUE)
 
-newXMLNode("xmcda:XMCDA", namespace = c("xsi" = "http://www.w3.org/2001/XMLSchema-instance", "xmcda" = "http://www.decision-deck.org/2009/XMCDA-2.0.0"), parent=tree)
+critIDs <- getCriteriaIDs(tree)
 
-root<-getNodeSet(tree, "/xmcda:XMCDA")
+intVals <- getCriteriaIntervalValues(tree, critIDs[[1]])
 
-criteria<-newXMLNode("criteria", parent=root[[1]])
-
-criterion<-newXMLNode("criterion",attrs = c(id="g1"), parent=criteria)
-
-y<-getNodeSet(tree,"//criteria")
-
-x<-getNumberOfCriteria(y[[1]])
 }
 
 \keyword{methods}

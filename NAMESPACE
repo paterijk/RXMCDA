@@ -2,7 +2,7 @@
 
 ## Generics and functions defined in this package
 export(
-		"getNumericValue",
+	"getNumericValue",
        "getNumberOfCriteria",
        "getCriteriaIDs",
        "getNumberOfAlternatives",
