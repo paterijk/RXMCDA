@@ -1,6 +1,6 @@
 library(RXMCDA)
 
-tree <- xmlTreeParse(system.file("data","testFile.xml",package="RXMCDA"), useInternalNodes=TRUE)
+tree <- xmlTreeParse(system.file("extdata","testFile.xml",package="RXMCDA"), useInternalNodes=TRUE)
 
 critIDs <- getCriteriaIDs(tree)
 
