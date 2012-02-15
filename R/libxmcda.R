@@ -52,10 +52,12 @@ checkXSD <- function(tree){
 
 	if (!is.na(xsdLocations[namespaces[i[1]]])){
 
-		xsd <- xmlTreeParse(xsdLocations[namespaces[i[1]]], isSchema =TRUE, useInternal = TRUE)
+		xsd <- xmlTreeParse(xsdLocations[namespaces[i[1]]], isSchema =TRUE, useInternalNodes = TRUE)
 	}else{
 
-		xsd <- xmlTreeParse("http://www.decision-deck.org/xmcda/_downloads/XMCDA-2.1.0.xsd", isSchema =TRUE, useInternal = TRUE)
+		# xsd <- xmlTreeParse("http://www.decision-deck.org/xmcda/_downloads/XMCDA-2.1.0.xsd", isSchema =TRUE, useInternalNodes = TRUE)
+		xsd <- xmlTreeParse(system.file("extdata","XMCDA-2.1.0.xsd",package="RXMCDA"), isSchema =TRUE, useInternalNodes = TRUE)
+		
 	}
 	
 	if (xmlSchemaValidate(xsd,tree)$status != 0)
