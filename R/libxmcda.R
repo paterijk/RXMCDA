@@ -2346,28 +2346,40 @@ putCapacity<- function(tree, capacity, criteriaIDs, mcdaConcept = NULL){
 		}
 		
 		c<-to.data.frame(capacity)
-		subsets.char <- row.names(c)
-		
-		for (i in 4:length(subsets.char)){
+
+		# generate a list containing all the possible subsets of criteria in a "natural" order
+
+		subsets<-list(c(),c(1))
+
+		compteur <- 2
+
+ 		for (i in 2:length(criteriaIDs)){
+			for (j in 1:compteur){
+				compteur<-compteur + 1
+				subsets[[compteur]]<-c(subsets[[j]],i)
+			}
+		}
+
+		# then create the xml file
+
+		for (i in 2:length(capacity@subsets)){
 			tmpErr<-try(
 					{
 						critVal = newXMLNode("criterionValue", parent = critVals, namespace=c())
 						critSet = newXMLNode("criteriaSet", parent = critVal, namespace=c())
-						a <- sub('\\{', 'c(', subsets.char[i])
-						b <- eval(parse(text=sub('\\}', ')', a)))
-						for (j in 1:length(b)){
+						tmp<-subsets[[capacity@subsets[i]+1]]
+						for (j in 1:length(tmp)){
 							elt<-newXMLNode("element",parent=critSet, namespace=c())
-							newXMLNode("criterionID", criteriaIDs[b[j]],parent=elt, namespace=c())
+							newXMLNode("criterionID", criteriaIDs[tmp[j]],parent=elt, namespace=c())
 						}
 						val = newXMLNode("value", parent = critVal, namespace=c())
-						newXMLNode("real",c[i,1], parent=val, namespace=c())
+						newXMLNode("real",c[i+2,1], parent=val, namespace=c())
 					}
 			)
 			if (inherits(tmpErr, 'try-error')){
 				err2<-"Impossible to put (a) value(s) in a <criteriaValues>."
 			}
 		}
-		
 	}
 	if (!is.null(err1)|(!is.null(err2))){
 		out<-c(out,list(status=c(err1,err2)))
