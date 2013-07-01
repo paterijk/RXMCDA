@@ -6,7 +6,8 @@
 \description{Puts a plot coded in base64 as an \code{alternativeValue} tag in an XML tree written according to the \code{XMCDA} standard.}
 
 \usage{
-putAlternativesPlot(tree, base64plot, alternativesIDs, mcdaConcept=NULL, name=NULL)
+putAlternativesPlot(tree, base64plot, alternativesIDs, 
+                    mcdaConcept=NULL, name=NULL)
 }
 
 \arguments{

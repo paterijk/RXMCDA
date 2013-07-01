@@ -6,7 +6,8 @@
 \description{Puts a value related to an alternative (or a set of alternatives) as a \code{alternativeValue} tag in an XML tree written according to the \code{XMCDA} standard.}
 
 \usage{
-putAlternativeValue(tree, alternativeValue, alternativesIDs = NULL, mcdaConcept = NULL)
+putAlternativeValue(tree, alternativeValue, 
+                    alternativesIDs = NULL, mcdaConcept = NULL)
 }
 
 \arguments{
@@ -27,7 +28,10 @@ altID <- c("x")
 
 tree = newXMLDoc()
 
-newXMLNode("xmcda:XMCDA", namespace = c("xsi" = "http://www.w3.org/2001/XMLSchema-instance", "xmcda" = "http://www.decision-deck.org/2009/XMCDA-2.1.0"), parent=tree)
+newXMLNode("xmcda:XMCDA", 
+           namespace = c("xsi" = "http://www.w3.org/2001/XMLSchema-instance", 
+           "xmcda" = "http://www.decision-deck.org/2009/XMCDA-2.1.0"), 
+           parent=tree)
 
 putAlternativeValue(tree,0.8,alternativesIDs = altID)
 }

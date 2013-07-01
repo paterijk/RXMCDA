@@ -1,6 +1,6 @@
 #############################################################################
 #
-# Copyright Institut Télécom-Télécom Bretagne, 2010
+# Copyright Institut Télécom-Télécom Bretagne, 2012
 #
 # Contributors:
 #   Patrick Meyer <patrick.meyer@telecom-bretagne.eu>
@@ -46,18 +46,22 @@ checkXSD <- function(tree){
 	
 	# search for namespaces containing XMCDA-2.*
 	
-	i <- grep("XMCDA-2.",namespaces)
+	i <- grep("XMCDA-2.",namespaces)	
 	
-	xsdLocations <- c("http://www.decision-deck.org/2009/XMCDA-2.0.0" = "http://www.decision-deck.org/xmcda/_downloads/XMCDA-2.0.0.xsd", "http://www.decision-deck.org/2009/XMCDA-2.1.0" = "http://www.decision-deck.org/xmcda/_downloads/XMCDA-2.1.0.xsd")
+	# xsdLocations <- c("http://www.decision-deck.org/2009/XMCDA-2.0.0" = "http://www.decision-deck.org/xmcda/_downloads/XMCDA-2.0.0.xsd", "http://www.decision-deck.org/2009/XMCDA-2.1.0" = "http://www.decision-deck.org/xmcda/_downloads/XMCDA-2.1.0.xsd")
+	
+	# the schema are locally stored
+	
+	xsdLocations <- c("http://www.decision-deck.org/2009/XMCDA-2.0.0" = "XMCDA-2.0.0.xsd", "http://www.decision-deck.org/2009/XMCDA-2.1.0" = "XMCDA-2.1.0.xsd", "http://www.decision-deck.org/2012/XMCDA-2.2.0" = "XMCDA-2.2.0.xsd")
 
 	if (!is.na(xsdLocations[namespaces[i[1]]])){
 
-		xsd <- xmlTreeParse(xsdLocations[namespaces[i[1]]], isSchema =TRUE, useInternalNodes = TRUE)
+		# xsd <- xmlTreeParse(xsdLocations[namespaces[i[1]]], isSchema =TRUE, useInternalNodes = TRUE)
+		xsd <- xmlTreeParse(system.file("extdata",xsdLocations[namespaces[i[1]]],package="RXMCDA"), isSchema =TRUE, useInternalNodes = TRUE)
 	}else{
 
 		# xsd <- xmlTreeParse("http://www.decision-deck.org/xmcda/_downloads/XMCDA-2.1.0.xsd", isSchema =TRUE, useInternalNodes = TRUE)
-		xsd <- xmlTreeParse(system.file("extdata","XMCDA-2.1.0.xsd",package="RXMCDA"), isSchema =TRUE, useInternalNodes = TRUE)
-		
+		xsd <- xmlTreeParse(system.file("extdata","XMCDA-2.2.0.xsd",package="RXMCDA"), isSchema =TRUE, useInternalNodes = TRUE)
 	}
 	
 	if (xmlSchemaValidate(xsd,tree)$status != 0)
@@ -74,7 +78,7 @@ getNumericValue <- function(tree){
 	out<-NA
 	
 	if (names(xmlChildren(tree[[1]]))[1] == "real"){
-		out<-as.real(xmlValue(getNodeSet(tree[[1]], "real")[[1]]))
+		out<-as.double(xmlValue(getNodeSet(tree[[1]], "real")[[1]]))
 	}
 	else if (names(xmlChildren(tree[[1]]))[1] == "integer"){
 		out<-as.integer(xmlValue(getNodeSet(tree[[1]], "integer")[[1]]))
@@ -309,7 +313,7 @@ getParameters <- function(tree, name = NULL){
 					names(out)[length(out)]<-toString(xmlGetAttr(options[[i]],"name"))
 				}
 				else if (names(xmlChildren(value[[1]]))[1] == "real"){
-					out<-c(out,list(as.real(xmlValue(getNodeSet(value[[1]], "real")[[1]]))))
+					out<-c(out,list(as.double(xmlValue(getNodeSet(value[[1]], "real")[[1]]))))
 					names(out)[length(out)]<-toString(xmlGetAttr(options[[i]],"name"))
 				}
 				else if (names(xmlChildren(value[[1]]))[1] == "integer"){

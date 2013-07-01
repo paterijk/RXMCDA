@@ -6,7 +6,8 @@
 \description{Gets Mobius capacities, stored in the \code{<criteriaValues>} tag, from an XML tree written according to the \code{XMCDA} standard.}
 
 \usage{
-getMobiusCapacities(tree, criteriaIDs, numberOfCriteria, kadditivity, mcdaConcept = NULL)
+getMobiusCapacities(tree, criteriaIDs, numberOfCriteria, 
+                    kadditivity, mcdaConcept = NULL)
 }
 
 \arguments{
@@ -27,11 +28,15 @@ getMobiusCapacities(tree, criteriaIDs, numberOfCriteria, kadditivity, mcdaConcep
 }
 
 \examples{
-tree <- xmlTreeParse(system.file("extdata","testFile.xml",package="RXMCDA"), useInternalNodes=TRUE)
+tree <- xmlTreeParse(system.file("extdata",
+                                 "testFile.xml",
+                                 package="RXMCDA"),
+                     useInternalNodes=TRUE)
 
 critIDs <- getCriteriaIDs(tree)
 
-capa <- getMobiusCapacities(tree, critIDs[[1]], 5, 5, mcdaConcept="mobiusCapacity")
+capa <- getMobiusCapacities(tree, critIDs[[1]], 5, 5,
+                            mcdaConcept="mobiusCapacity")
 }
 
 \keyword{methods}

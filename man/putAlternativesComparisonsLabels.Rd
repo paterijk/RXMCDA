@@ -6,7 +6,8 @@
 \description{Writes \code{<alternativesComparisons>} in an XML tree written according to the \code{XMCDA} standard.}
 
 \usage{
-putAlternativesComparisonsLabels(tree, alternativesComparisons, mcdaConcept = NULL)
+putAlternativesComparisonsLabels(tree, alternativesComparisons, 
+                                 mcdaConcept = NULL)
 }
 
 \arguments{
@@ -25,7 +26,10 @@ putAlternativesComparisonsLabels(tree, alternativesComparisons, mcdaConcept = NU
 \examples{
 tree = newXMLDoc()
 
-newXMLNode("xmcda:XMCDA", namespace = c("xsi" = "http://www.w3.org/2001/XMLSchema-instance", "xmcda" = "http://www.decision-deck.org/2009/XMCDA-2.1.0"), parent=tree)
+newXMLNode("xmcda:XMCDA", 
+           namespace = c("xsi" = "http://www.w3.org/2001/XMLSchema-instance", 
+           "xmcda" = "http://www.decision-deck.org/2009/XMCDA-2.1.0"), 
+           parent=tree)
 
 comps <- rbind(c("x", "y", "0.07"), c("y", "z", "0.01"))
 

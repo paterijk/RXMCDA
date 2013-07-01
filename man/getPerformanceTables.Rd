@@ -6,7 +6,8 @@
 \description{Extracts the performance tables stored in the \code{<performanceTable} tags from an XML tree written according to the \code{XMCDA} standard.}
 
 \usage{
-getPerformanceTables(tree, altIDs = NULL, critIDs = NULL, mcdaConcept = NULL)
+getPerformanceTables(tree, altIDs = NULL, critIDs = NULL, 
+                     mcdaConcept = NULL)
 }
 
 \arguments{
@@ -27,7 +28,8 @@ getPerformanceTables(tree, altIDs = NULL, critIDs = NULL, mcdaConcept = NULL)
 }
 
 \examples{
-tree <- xmlTreeParse(system.file("extdata","testFile.xml",package="RXMCDA"), useInternalNodes=TRUE)
+tree <- xmlTreeParse(system.file("extdata","testFile.xml",package="RXMCDA"), 
+                     useInternalNodes=TRUE)
 
 tables <- getPerformanceTables(tree)
 }

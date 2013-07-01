@@ -27,11 +27,15 @@ getCriteriaPairsValues(tree, criteriaIDs, mcdaConcept = NULL)
 }
 
 \examples{
-tree <- xmlTreeParse(system.file("extdata","testFile.xml",package="RXMCDA"), useInternalNodes=TRUE)
+tree <- xmlTreeParse(system.file("extdata",
+                                 "testFile.xml",
+                                 package="RXMCDA"), 
+                     useInternalNodes=TRUE)
 
 critIDs <- getCriteriaIDs(tree)
 
-pairsVals <- getCriteriaPairsValues(tree, critIDs[[1]],mcdaConcept="interactionValues")
+pairsVals <- getCriteriaPairsValues(tree, critIDs[[1]],
+                                          mcdaConcept="interactionValues")
 }
 
 \keyword{methods}

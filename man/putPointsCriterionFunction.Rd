@@ -24,7 +24,10 @@ putPointsCriterionFunction(tree, points, mcdaConcept = NULL)
 \examples{
 tree = newXMLDoc()
 
-newXMLNode("xmcda:XMCDA", namespace = c("xsi" = "http://www.w3.org/2001/XMLSchema-instance", "xmcda" = "http://www.decision-deck.org/2009/XMCDA-2.1.0"), parent=tree)
+newXMLNode("xmcda:XMCDA", 
+           namespace = c("xsi" = "http://www.w3.org/2001/XMLSchema-instance", 
+           "xmcda" = "http://www.decision-deck.org/2009/XMCDA-2.1.0"), 
+           parent=tree)
 
 x<-list()
 x<-c(x,list(g1=rbind(c(1,2),c(3,4))))

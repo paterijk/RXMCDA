@@ -29,7 +29,10 @@ getAlternativesComparisons(tree, performanceTable, mcdaConcept = NULL)
 \examples{
 tree = newXMLDoc()
 
-newXMLNode("xmcda:XMCDA", namespace = c("xsi" = "http://www.w3.org/2001/XMLSchema-instance", "xmcda" = "http://www.decision-deck.org/2009/XMCDA-2.1.0"), parent=tree)
+newXMLNode("xmcda:XMCDA", 
+           namespace = c("xsi" = "http://www.w3.org/2001/XMLSchema-instance", 
+           "xmcda" = "http://www.decision-deck.org/2009/XMCDA-2.1.0"), 
+           parent=tree)
 
 root<-getNodeSet(tree, "/xmcda:XMCDA")
 
@@ -50,7 +53,9 @@ newXMLNode("real", "0.5", parent=value, namespace=c())
 alternativesIDs <- c("a01","a02")
 criteriaIDs <- c("g1","g2")
 
-performance.table<-matrix(nrow=length(alternativesIDs),ncol=length(criteriaIDs),dimnames = list(alternativesIDs,criteriaIDs))
+performance.table<-matrix(nrow=length(alternativesIDs),
+                          ncol=length(criteriaIDs),
+                          dimnames = list(alternativesIDs,criteriaIDs))
 
 for (i in 1:length(alternativesIDs)){
   for (j in 1:length(criteriaIDs)){

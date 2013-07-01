@@ -27,11 +27,15 @@ getAlternativesIntervalValues(tree, alternativesIDs, mcdaConcept = NULL)
 }
 
 \examples{
-tree <- xmlTreeParse(system.file("extdata","testFile.xml",package="RXMCDA"), useInternalNodes=TRUE)
+tree <- xmlTreeParse(system.file("extdata",
+                                 "testFile.xml",
+                                 package="RXMCDA"), 
+                     useInternalNodes=TRUE)
 
 altIDs <- getAlternativesIDs(tree)
 
-altVals <- getAlternativesIntervalValues(tree, altIDs[[1]], mcdaConcept="alternativesIntervalValues")
+altVals <- getAlternativesIntervalValues(tree, altIDs[[1]], 
+                                         mcdaConcept="alternativesIntervalValues")
 }
 
 \keyword{methods}

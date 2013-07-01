@@ -27,7 +27,10 @@ getAlternativesValues(tree, alternativesIDs, mcdaConcept = NULL)
 }
 
 \examples{
-tree <- xmlTreeParse(system.file("extdata","testFile.xml",package="RXMCDA"), useInternalNodes=TRUE)
+tree <- xmlTreeParse(system.file("extdata",
+                                 "testFile.xml",
+                                 package="RXMCDA"),
+                     useInternalNodes=TRUE)
 
 altIDs <- getAlternativesIDs(tree)
 
