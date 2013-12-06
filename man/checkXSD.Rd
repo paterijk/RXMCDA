@@ -29,7 +29,8 @@ root<-getNodeSet(tree, "/xmcda:XMCDA")
 
 criteria<-newXMLNode("criteria", parent=root[[1]], namespace=c())
 
-criterion<-newXMLNode("criterion",attrs = c(id="g1"), parent=criteria, namespace=c())
+criterion<-newXMLNode("criterion",attrs = c(id="g1"), 
+                        parent=criteria, namespace=c())
 
 y<-checkXSD(tree)
 }
