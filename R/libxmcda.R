@@ -2183,8 +2183,6 @@ putMessage <- function(tree, message, name = NULL){
 
 getMobiusCapacities<-function(tree, criteriaIDs, numberOfCriteria, kadditivity, mcdaConcept = NULL){
 	
-	library(kappalab)
-	
 	# if an mcdaConcept has been specified, search according to this attribute
 	specification = ""
 	if (!is.null(mcdaConcept)) specification <- paste("[@mcdaConcept='",mcdaConcept,"']",sep="")	
@@ -2317,8 +2315,6 @@ getMobiusCapacities<-function(tree, criteriaIDs, numberOfCriteria, kadditivity, 
 
 
 putCapacity<- function(tree, capacity, criteriaIDs, mcdaConcept = NULL){
-	
-	library(kappalab)
 	
 	out<-list()
 	err1<-NULL
