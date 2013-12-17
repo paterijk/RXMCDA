@@ -320,8 +320,12 @@ getParameters <- function(tree, name = NULL){
 					out<-c(out,list(as.integer(xmlValue(getNodeSet(value[[1]], "integer")[[1]]))))
 					names(out)[length(out)]<-toString(xmlGetAttr(options[[i]],"name"))
 				}
+				else if (names(xmlChildren(value[[1]]))[1] == "boolean") {
+				  out <- c(out, list(as.logical(xmlValue(getNodeSet(value[[1]], "boolean")[[1]]))))
+				  names(out)[length(out)] <- toString(xmlGetAttr(options[[i]], "name"))
+				}
 				# If the value is neither of types label, 
-				# real or integer, we do not read it. 
+				# real, integer or boolean, we do not read it. 
 				# TODO: add the other types for more universality!
 				
 			}

@@ -17,7 +17,7 @@ getParameters(tree, name = NULL)
 \value{
   The function returns a list structured as follows: 
      
-  \item{--}{The first elements contain the parameters which have been read in each \code{parameter} tag (either a \code{<label>}, \code{<real>} or \code{<integer>}).
+  \item{--}{The first elements contain the parameters which have been read in each \code{parameter} tag (either a \code{<label>}, \code{<real>}, \code{<integer>} or \code{<boolean>}).
   These elements are named according to the \code{name} attribute if it can be found.}
   
   \item{status}{Either OK if all the \code{<methodParameters>} tags could be correctly read, or the description of the error.}
