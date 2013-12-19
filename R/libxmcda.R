@@ -283,6 +283,89 @@ getAlternativesIDs <- function(tree, mcdaConcept = NULL){
 	return(out)
 }
 
+# getNumberOfCategories returns a list containing the number of categories defined in each <categories> tag.
+# Possibility to specify which mcdaConcept should be searched.
+# The elements of the list are named according to the mcdaConcept attribute, if it has been defined.
+
+getNumberOfCategories <- function (tree, mcdaConcept = NULL) 
+{
+  err <- NULL
+  specification = ""
+  if (!is.null(mcdaConcept)) 
+    specification <- paste("[@mcdaConcept='", mcdaConcept, 
+                           "']", sep = "")
+  categories <- getNodeSet(tree, paste("//categories", specification, 
+                                       sep = ""))
+  out <- list()
+  if (length(categories) > 0) {
+    for (i in 1:length(categories)) {
+      elements <- getNodeSet(categories[[i]], "category")
+      inactive <- getNodeSet(categories[[i]], "category[active='false']")
+      out <- c(out, list(length(elements) - length(inactive)))
+      names(out)[length(out)] <- toString(xmlGetAttr(categories[[i]], "mcdaConcept"))
+    }
+  }
+  else {
+    err <- "No <categories> found."
+  }
+  if (!is.null(err)) {
+    out <- c(out, list(status = err))
+  }
+  else {
+    out <- c(out, list(status = "OK"))
+  }
+  return(out)
+}
+
+# getCategoriesIDs returns a list containing the ids of the categories in each <categories> tag.
+# Possibility to specify which mcdaConcept should be searched. 
+# The elements of the list are named according to the mcdaConcept attribute, if it has been defined.
+
+getCategoriesIDs <- function (tree, mcdaConcept = NULL) 
+{
+  err <- NULL
+  specification = ""
+  if (!is.null(mcdaConcept)) 
+    specification <- paste("[@mcdaConcept='", mcdaConcept, 
+                           "']", sep = "")
+  categories <- getNodeSet(tree, paste("//categories", specification, 
+                                       sep = ""))
+  out <- list()
+  if (length(categories) > 0) {
+    for (i in 1:length(categories)) {
+      elements <- getNodeSet(categories[[i]], "category")
+      categoriesIDs <- c()
+      if (length(elements) > 0) {
+        for (j in 1:length(elements)) {
+          act <- getNodeSet(elements[[j]], "active")
+          if (length(act) == 0) {
+            categoriesIDs <- c(categoriesIDs, xmlGetAttr(elements[[j]], "id"))
+          }
+          else {
+            if (xmlValue(act[[1]]) == "true") {
+              categoriesIDs <- c(categoriesIDs, xmlGetAttr(elements[[j]], "id"))
+            }
+          }
+        }
+      }
+      out <- c(out, list(categoriesIDs))
+      names(out)[length(out)] <- toString(xmlGetAttr(categories[[i]], "mcdaConcept"))
+    }
+  }
+  else {
+    err <- "No <criteria> found."
+  }
+  if (!is.null(err)) {
+    out <- c(out, list(status = err))
+  }
+  else {
+    out <- c(out, list(status = "OK"))
+  }
+  return(out)
+}
+
+
+
 # getParameters returns a list containing the values of the parameters under <methodParameters>. 
 # Possibility to specify which parameter name should be searched. 
 # The elements of the list are named according to the name attribute, if it has been defined. 

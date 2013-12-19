@@ -7,6 +7,8 @@ export(
        "getCriteriaIDs",
        "getNumberOfAlternatives",
        "getAlternativesIDs",
+       "getNumberOfCategories",
+       "getCategoriesIDs",
        "getParameters",
        "getPerformanceTables",
        "getCriteriaComparisons",
