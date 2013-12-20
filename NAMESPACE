@@ -37,6 +37,10 @@ export(
        "putCapacity",
        "getMobiusCapacities",
        "putPerformanceTable",
-       "putPointsCriterionFunction"
+       "putPointsCriterionFunction",
+	   "getCategoriesValues",
+	   "getCategoriesIntervalValues",
+	   "putCategoriesValues",
+	   "putCategoriesIntervalValues"
        )
 

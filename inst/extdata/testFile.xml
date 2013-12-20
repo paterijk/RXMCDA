@@ -1547,5 +1547,53 @@
 			</value>
 		</criterionValue>
 	</criteriaValues>
-
+	
+	<categories>
+		<category id="c01"/>
+		<category id="c02"/>
+		<category id="c03"/>
+		<category id="c04"/>
+	</categories>
+	
+	<categoriesValues>
+		<categoryValue>
+			<categoryID>c01</categoryID>
+			<value>
+				<interval>
+					<lowerBound>
+						<real>2</real>
+					</lowerBound>
+					<upperBound>
+						<real>6</real>
+					</upperBound>
+				</interval>
+			</value>
+		</categoryValue>
+		<categoryValue>
+			<categoryID>c04</categoryID>
+			<value>
+				<interval>
+					<lowerBound>
+						<real>1</real>
+					</lowerBound>
+				</interval>
+			</value>
+		</categoryValue>
+	</categoriesValues>
+  
+	<categoriesValues>
+		<categoryValue>
+			<categoryID>c01</categoryID>
+			<value>
+				<real>100</real>
+			</value>
+		</categoryValue>
+		<categoryValue>
+			<categoryID>c02</categoryID>
+			<value>
+				<real>-100</real>
+			</value>
+		</categoryValue>
+	</categoriesValues>
+	
 </toto:XMCDA>

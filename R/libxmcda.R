@@ -1605,6 +1605,157 @@ getAlternativesIntervalValues <- function(tree, alternativesIDs, mcdaConcept = N
 	return(out)
 }
 
+getCategoriesValues <- function(tree, categoriesIDs, mcdaConcept = NULL) {
+  specification = ""
+  if (!is.null(mcdaConcept))
+    specification <- paste("[@mcdaConcept='", mcdaConcept, "']", sep = "")	
+  
+  categoriesValues <- getNodeSet(tree, paste("//categoriesValues",
+                                             specification, sep = ""))
+  
+  out<-list()
+  err1<-NULL
+  err2<-NULL
+  
+  if (length(categoriesValues)>0){
+    for (i in 1:length(categoriesValues)){
+      # check whether we only have <categoryID> under <categoryValue>
+      # and <real> under <value> (and not an interval)
+      test1<-getNodeSet(categoriesValues[[i]], "categoryValue")
+      test1.names<-NULL
+      test2<-getNodeSet(categoriesValues[[i]], "categoryValue/value")
+      test2.names<-NULL
+      tmpErr<-try(
+      {
+        for (k in seq_len(length(test1)))
+          test1.names<-c(test1.names, names(xmlChildren(test1[[k]])))
+        for (k in seq_len(length(test2)))
+          test2.names<-c(test2.names, names(xmlChildren(test2[[k]])))
+      })
+      if (inherits(tmpErr, 'try-error')){
+        err2<-"Impossible to read (a) value(s) in a <categoryValue>."
+      }
+      if (!("categoriesSet" %in% test1.names)& !("interval" %in% test2.names)){			
+        catVal <- matrix(nrow=0,ncol=2)
+        
+        vals <- getNodeSet(categoriesValues[[i]], "categoryValue")
+        
+        if (length(vals)>0){
+          for (j in 1:length(vals)){
+            tmpErr<-try(
+            {
+              categoryID <- getNodeSet(vals[[j]], "categoryID")
+              val <- getNodeSet(vals[[j]], "value")
+              if (length(which(categoriesIDs == xmlValue(categoryID[[1]]))) > 0)
+                catVal <- rbind(catVal, c(which(categoriesIDs == xmlValue(categoryID[[1]])),
+                                               getNumericValue(val)))
+            })
+            if (inherits(tmpErr, 'try-error')){
+              err2<-"Impossible to read (a) value(s) in a <categoriesValues>."
+            }
+          }
+        }
+        
+        if (dim(catVal)[1] == 0)
+          catVal <- NULL
+        out<-c(out,list(catVal))
+        names(out)[length(out)] <- toString(xmlGetAttr(categoriesValues[[i]],
+                                                       "mcdaConcept"))
+      }
+    }
+  }
+  else {
+    err1<-"No <categoriesValues> found."
+  }
+  
+  if (length(out) == 0)
+    err1<-"No <categoriesValues> found."
+  if (!is.null(err1)|(!is.null(err2))){
+    out<-c(out,list(status=c(err1,err2)))
+  }
+  else{
+    out<-c(out,list(status="OK"))
+  }
+  return(out)
+}
+
+getCategoriesIntervalValues <- function (tree, categoriesIDs, mcdaConcept = NULL) {
+  specification = ""
+  if (!is.null(mcdaConcept)) 
+    specification <- paste("[@mcdaConcept='", mcdaConcept, "']", sep = "")
+  categoriesValues <- getNodeSet(tree, paste("//categoriesValues", 
+                                               specification, sep = ""))
+  out <- list()
+  err1 <- NULL
+  err2 <- NULL
+  if (length(categoriesValues) > 0) {
+    for (i in 1:length(categoriesValues)) {
+      test1 <- getNodeSet(categoriesValues[[i]], "categoryValue")
+      test1.names <- NULL
+      test2 <- getNodeSet(categoriesValues[[i]], "categoryValue/value")
+      test2.names <- NULL
+      tmpErr <- try({
+        for (k in seq_len(length(test1))) test1.names <- c(test1.names, 
+                                                    names(xmlChildren(test1[[k]])))
+        for (k in seq_len(length(test2))) test2.names <- c(test2.names, 
+                                                    names(xmlChildren(test2[[k]])))
+      })
+      if (inherits(tmpErr, "try-error")) {
+        err2 <- "Impossible to read (a) value(s) in a <categoriesValues>."
+      }
+      
+      if (!("categoriesSet" %in% test1.names) & ("interval" %in% test2.names)) {
+        catVal <- matrix(nrow = 0, ncol = 3)
+        vals <- getNodeSet(categoriesValues[[i]], "categoryValue")
+        
+        for (j in seq_len(length(vals))) {
+          tmpErr <- try({
+            categoryID <- getNodeSet(vals[[j]], "categoryID")
+            lowerBoundNode <- getNodeSet(vals[[j]], "value/interval/lowerBound")
+            upperBoundNode <- getNodeSet(vals[[j]], "value/interval/upperBound")
+            
+            lowerBound <- NA
+            upperBound <- NA
+            
+            if (length(lowerBoundNode) == 1)
+              lowerBound <- getNumericValue(lowerBoundNode)
+            
+            if (length(upperBoundNode) == 1)
+              upperBound <- getNumericValue(upperBoundNode)
+            
+            if (length(which(categoriesIDs == xmlValue(categoryID[[1]]))) > 0 &&
+                  (!is.na(lowerBound) || !is.na(upperBound))) 
+              catVal <- rbind(catVal, c(which(categoriesIDs == xmlValue(categoryID[[1]])),
+                                        lowerBound,
+                                        upperBound))
+          })
+          if (inherits(tmpErr, "try-error")) {
+            err2 <- "Impossible to read (a) value(s) in a <categoriesValues>."
+          }
+        }
+        
+        if (dim(catVal)[1] == 0) 
+          catVal <- NULL
+        out <- c(out, list(catVal))
+        names(out)[length(out)] <- toString(xmlGetAttr(categoriesValues[[i]], 
+                                                       "mcdaConcept"))
+      }
+    }
+  }
+  else {
+    err1 <- "No <categoriesValues> found."
+  }
+  if (length(out) == 0) 
+    err1 <- "No <categoriesValues> found."
+  if (!is.null(err1) | (!is.null(err2))) {
+    out <- c(out, list(status = c(err1, err2)))
+  }
+  else {
+    out <- c(out, list(status = "OK"))
+  }
+  return(out)
+}
+
 # Puts criteriaValues in the XML tree.
 # Returns an error if something went wrong.  
 # Possibility to specify which mcdaConcept should be written. 
@@ -2097,6 +2248,111 @@ putAlternativesComparisonsLabels <-function(tree, alternativesComparisons, mcdaC
 	return(out)
 }
 
+putCategoriesValues <- function (tree, categoriesValues, categoriesIDs,
+                                 mcdaConcept = NULL) {
+  out <- list()
+  err1 <- NULL
+  err2 <- NULL
+  root <- NULL
+  tmpErr <- try({
+    root <- xmlRoot(tree)
+  })
+  if (inherits(tmpErr, "try-error")) {
+    err1 <- "No <xmcda:XMCDA> found."
+  }
+  if (length(root) != 0) {
+    if (!is.null(mcdaConcept)) {
+      categoriesValuesParent <- newXMLNode("categoriesValues",
+                                           attrs = c(mcdaConcept = mcdaConcept), 
+                                           parent = root, namespace = c())
+    }
+    else {
+      categoriesValuesParent <- newXMLNode("categoriesValues", parent = root, 
+                                           namespace = c())
+    }
+    if (nrow(categoriesValues) > 0) {
+      for (i in 1:dim(categoriesValues)[1]) {
+        tmpErr <- try({
+          categoryValue <- newXMLNode("categoryValue",
+                                      parent = categoriesValuesParent,
+                                      namespace = c())
+          newXMLNode("categoryID", categoriesIDs[categoriesValues[i, 1]],
+                     parent = categoryValue, namespace = c())
+          value <- newXMLNode("value", parent = categoryValue, namespace = c())
+          newXMLNode("real", categoriesValues[i, 2], parent = value, namespace=c())
+        })
+        if (inherits(tmpErr, "try-error")) {
+          err2 <- "Impossible to put (a) value(s) in a <alternativesValues>."
+        }
+      }
+    }
+  }
+  if (!is.null(err1) | (!is.null(err2))) {
+    out <- c(out, list(status = c(err1, err2)))
+  }
+  else {
+    out <- c(out, list(status = "OK"))
+  }
+  return(out)
+}
+
+putCategoriesIntervalValues <- function (tree, categoriesValues, categoriesIDs,
+                                         mcdaConcept = NULL) {
+  out <- list()
+  err1 <- NULL
+  err2 <- NULL
+  root <- NULL
+  tmpErr <- try({
+    root <- xmlRoot(tree)
+  })
+  if (inherits(tmpErr, "try-error")) {
+    err1 <- "No <xmcda:XMCDA> found."
+  }
+  if (length(root) != 0) {
+    if (!is.null(mcdaConcept)) {
+      categoriesValuesParent <- newXMLNode("categoriesValues",
+                                           attrs = c(mcdaConcept = mcdaConcept), 
+                                           parent = root, namespace = c())
+    }
+    else {
+      categoriesValuesParent <- newXMLNode("categoriesValues", parent = root, 
+                                           namespace = c())
+    }
+    if (nrow(categoriesValues) > 0) {
+      for (i in 1:dim(categoriesValues)[1]) {
+        tmpErr <- try({
+          if (!is.na(categoriesValues[i, 2]) || !is.na(categoriesValues[i, 3])) {
+            categoryValue <- newXMLNode("categoryValue",
+                                        parent = categoriesValuesParent,
+                                        namespace = c())
+            newXMLNode("categoryID", categoriesIDs[categoriesValues[i, 1]],
+                       parent = categoryValue, namespace = c())
+            value <- newXMLNode("value", parent = categoryValue, namespace = c())
+            interval <- newXMLNode("interval", parent = value, namespace = c())
+            if (!is.na(categoriesValues[i, 2])) {
+              lowerBound <- newXMLNode("lowerBound", parent = interval)
+              newXMLNode("real", categoriesValues[i, 2], parent = lowerBound)
+            }
+            if (!is.na(categoriesValues[i, 3])) {
+              upperBound <- newXMLNode("upperBound", parent = interval)
+              newXMLNode("real", categoriesValues[i, 3], parent = upperBound)
+            }
+          }
+        })
+        if (inherits(tmpErr, "try-error")) {
+          err2 <- "Impossible to put (a) value(s) in a <alternativesValues>."
+        }
+      }
+    }
+  }
+  if (!is.null(err1) | (!is.null(err2))) {
+    out <- c(out, list(status = c(err1, err2)))
+  }
+  else {
+    out <- c(out, list(status = "OK"))
+  }
+  return(out)
+}
 
 putErrorMessage <- function(tree, errorMessage, name = NULL){
 	
