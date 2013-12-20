@@ -41,6 +41,8 @@ export(
 	   "getCategoriesValues",
 	   "getCategoriesIntervalValues",
 	   "putCategoriesValues",
-	   "putCategoriesIntervalValues"
+	   "putCategoriesIntervalValues",
+	   "getAlternativesAffectations",
+	   "putAlternativesAffectations"
        )
 

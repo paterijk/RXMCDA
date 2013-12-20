@@ -1596,4 +1596,30 @@
 		</categoryValue>
 	</categoriesValues>
 	
+	<alternativesAffectations mcdaConcept="alternativeAssignments">
+		<alternativeAffectation>
+			<alternativeID>S037</alternativeID>
+				<categoryID>c03</categoryID>
+			</alternativeAffectation>
+		<alternativeAffectation>
+			<alternativeID>S021</alternativeID>
+			<categoriesInterval>
+				<lowerBound>
+					<categoryID>c02</categoryID>
+				</lowerBound>
+			</categoriesInterval>
+		</alternativeAffectation>
+		<alternativeAffectation>
+			<alternativeID>S051</alternativeID>
+			<categoriesInterval>
+				<lowerBound>
+					<categoryID>c02</categoryID>
+				</lowerBound>
+				<upperBound>
+					<categoryID>c03</categoryID>
+				</upperBound>
+			</categoriesInterval>
+		</alternativeAffectation>
+	</alternativesAffectations>
+  
 </toto:XMCDA>
