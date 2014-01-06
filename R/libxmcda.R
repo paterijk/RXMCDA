@@ -977,6 +977,78 @@ getAlternativesComparisonsLabels <- function(tree, altIDs=NULL, mcdaConcept = NU
 	return(out)
 }
 
+getAlternativesComparisonsValues <- function (tree, alternativesIDs = NULL, mcdaConcept = NULL) {
+  specification = ""
+  if (!is.null(mcdaConcept)) 
+    specification <- paste("[@mcdaConcept='", mcdaConcept, "']", sep = "")
+  alternativesComparisons <- getNodeSet(tree, paste("//alternativesComparisons", 
+                                                    specification, sep = ""))
+  out <- list()
+  err1 <- NULL
+  err2 <- NULL
+  if (length(alternativesComparisons) > 0) {
+    for (i in 1:length(alternativesComparisons)) {
+      alternativesComp <- matrix(nrow = 0, ncol = 3)
+      pairs <- getNodeSet(alternativesComparisons[[i]], "pairs/pair")
+      if (length(pairs) > 0) {
+        for (j in 1:length(pairs)) {
+          head <- NULL
+          tail <- NULL
+          val <- NULL
+          noPairs <- FALSE
+          tmpErr <- try({
+            head <- getNodeSet(pairs[[j]], "initial/alternativeID")
+            tail <- getNodeSet(pairs[[j]], "terminal/alternativeID")
+          })
+          if (inherits(tmpErr, "try-error")) {
+            err2 <- "Impossible to read (a) value(s) in a <alternativesComparisons>."
+            noPairs <- TRUE
+          }
+          tmpErr2 <- try({
+            val <- getNodeSet(pairs[[j]], "value")
+          })
+          noVal <- FALSE
+          if (inherits(tmpErr2, "try-error") || (length(val) == 0)) {
+            noVal <- TRUE
+          }
+          if ((noPairs == FALSE) & (noVal == FALSE)) {
+            val <- getNodeSet(pairs[[j]], "value")
+            if (((xmlValue(head[[1]]) %in% alternativesIDs) & 
+                   (xmlValue(tail[[1]]) %in% alternativesIDs)) | (is.null(alternativesIDs))) 
+              alternativesComp <- rbind(alternativesComp, 
+                                        c(which(alternativesIDs == xmlValue(head[[1]])),
+                                          which(alternativesIDs == xmlValue(tail[[1]])), 
+                                          getNumericValue(val)))
+          }
+          else if ((noPairs == FALSE) & (noVal == TRUE)) {
+            if (((xmlValue(head[[1]]) %in% alternativesIDs) & 
+                   (xmlValue(tail[[1]]) %in% alternativesIDs)) | (is.null(alternativesIDs))) 
+              alternativesComp <- rbind(alternativesComp, 
+                                        c(which(alternativesIDs == xmlValue(head[[1]])),
+                                          which(alternativesIDs == xmlValue(tail[[1]])), 
+                                          NA))
+          }
+        }
+      }
+      if (dim(alternativesComp)[1] == 0) 
+        alternativesComp <- NULL
+      out <- c(out, list(alternativesComp))
+      names(out)[length(out)] <- toString(xmlGetAttr(alternativesComparisons[[i]], 
+                                                     "mcdaConcept"))
+    }
+  }
+  else {
+    err1 <- "No <alternativesComparisons> found."
+  }
+  if (!is.null(err1) | (!is.null(err2))) {
+    out <- c(out, list(status = c(err1, err2)))
+  }
+  else {
+    out <- c(out, list(status = "OK"))
+  }
+  return(out)
+}
+
 getCriteriaComparisonsLabels <- function(tree, critIDs=NULL, mcdaConcept = NULL){
 	# if an mcdaConcept has been specified, search according to this attribute
 	specification = ""
