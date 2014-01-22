@@ -6,7 +6,8 @@
 \description{Gets alternative affectations, stored in the \code{<alternativesAffectations>} tag, from an XML tree written according to the \code{XMCDA} standard.}
 
 \usage{
-getAlternativesAffectations(tree, alternativesIDs, categoriesIDs, mcdaConcept = NULL)
+getAlternativesAffectations(tree, alternativesIDs, categoriesIDs, 
+                            mcdaConcept = NULL)
 }
 
 \arguments{
@@ -34,7 +35,8 @@ tree <- xmlTreeParse(system.file("extdata",
 
 alternativesIDs <- getAlternativesIDs(tree)
 categoriesIDs <- getCategoriesIDs(tree)
-altAff <- getAlternativesAffectations(tree, alternativesIDs[[1]], categoriesIDs[[1]])
+altAff <- getAlternativesAffectations(tree, 
+                                      alternativesIDs[[1]], categoriesIDs[[1]])
 
 }
 
