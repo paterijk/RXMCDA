@@ -1,5 +1,7 @@
 ## Namespace for RXMCDA
 
+import(kappalab, XML)
+
 ## Generics and functions defined in this package
 export(
 	"getNumericValue",
@@ -38,12 +40,14 @@ export(
        "getMobiusCapacities",
        "putPerformanceTable",
        "putPointsCriterionFunction",
-	   "getCategoriesValues",
-	   "getCategoriesIntervalValues",
-	   "putCategoriesValues",
-	   "putCategoriesIntervalValues",
-	   "getAlternativesAffectations",
-	   "putAlternativesAffectations",
-     "getAlternativesComparisonsValues"
+       "getCategoriesValues",
+       "getCategoriesIntervalValues",
+       "putCategoriesValues",
+       "putCategoriesIntervalValues",
+       "getAlternativesAffectations",
+       "putAlternativesAffectations",
+       "getAlternativesComparisonsValues"
        )
+       
+
 
