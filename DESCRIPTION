@@ -1,11 +1,12 @@
 Package: RXMCDA
-Version: 1.5.0
+Version: 1.5.2
 Date: 2014-01-22
 Title: An XMCDA parser for R
 Author: Patrick Meyer and Sebastien Bigaret, with contributions from Krzysztof Ciomek.  
 Maintainer: Patrick Meyer <patrick.meyer@telecom-bretagne.eu>
 Description: The RXMCDA package for the R statistical software allows you to read many XMCDA tags and transform them into R variables which are then usable in your MCDA algorithms written in R. The library also allows to write certain R variables into XML files according to the XMCDA standard.
-Depends: XML, kappalab
+Depends: XML
+Imports: kappalab
 Encoding: latin1
 License: CeCILL-2
 URL: https://github.com/paterijk/RXMCDA

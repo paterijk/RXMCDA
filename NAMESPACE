@@ -1,6 +1,6 @@
 ## Namespace for RXMCDA
 
-import(kappalab, XML)
+import(kappalab,XML)
 
 ## Generics and functions defined in this package
 export(
@@ -46,7 +46,9 @@ export(
        "putCategoriesIntervalValues",
        "getAlternativesAffectations",
        "putAlternativesAffectations",
-       "getAlternativesComparisonsValues"
+       "getAlternativesComparisonsValues",
+       "putAlternativesIDs",
+       "putCriteriaMatrix"
        )
        
 
