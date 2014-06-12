@@ -14,8 +14,16 @@ value <- newXMLNode("value", parent=parameter, namespace=c())
 
 newXMLNode("integer", value=3, parent=value, namespace=c())
 
+parameter <- newXMLNode("parameter",attrs = c(name="trueFalseInt"), parent=parameters, namespace=c())
+
+value <- newXMLNode("value", parent=parameter, namespace=c())
+
+newXMLNode("boolean", value=1, parent=value, namespace=c())
+
 y<-getNodeSet(tree,"//methodParameters")
 
 stopifnot(getParameters(y[[1]])$numIt == 3)
+
+stopifnot(getParameters(y[[1]])$trueFalseInt == 1)
 
 
