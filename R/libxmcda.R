@@ -405,12 +405,13 @@ getParameters <- function(tree, name = NULL){
         }
         else if (names(xmlChildren(value[[1]]))[1] == "boolean") {
           val <- xmlValue(getNodeSet(value[[1]], "boolean")[[1]])
-          if (!(identical(value,FALSE)||identical(value,TRUE))){
-            # then we have an integer 0 or 1
-            out <- c(out, list(as.integer(val)))
+          if ((val=="true")||(val=="1")) {
+            out <- c(out, TRUE)
+          }
+          else if  ((val=="false")||(val=="0")) {
+            out <- c(out, FALSE)
           } else {
-            # then it is either true or false
-            out <- c(out, list(as.logical(val)))
+            out <- c(out, list(NA))
           }
           names(out)[length(out)] <- toString(xmlGetAttr(options[[i]], "name"))
         }

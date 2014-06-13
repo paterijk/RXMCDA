@@ -1,6 +1,6 @@
 Package: RXMCDA
-Version: 1.5.3
-Date: 2014-06-12
+Version: 1.5.4
+Date: 2014-06-13
 Title: An XMCDA parser for R
 Author: Patrick Meyer and Sebastien Bigaret, with contributions from Krzysztof Ciomek.  
 Maintainer: Patrick Meyer <patrick.meyer@telecom-bretagne.eu>
