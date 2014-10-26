@@ -2691,8 +2691,17 @@ putCategoriesValues <- function (tree, categoriesValues, categoriesIDs,
                                       namespace = c())
           newXMLNode("categoryID", categoriesIDs[categoriesValues[i, 1]],
                      parent = categoryValue, namespace = c())
-          value <- newXMLNode("value", parent = categoryValue, namespace = c())
-          newXMLNode("real", categoriesValues[i, 2], parent = value, namespace=c())
+          if (ncol(categoriesValues) == 2) {
+            value <- newXMLNode("value", parent = categoryValue, namespace = c())
+            newXMLNode("real", categoriesValues[i, 2], parent = value, namespace = c())
+          } else if (ncol(categoriesValues) > 2) {
+            values <- newXMLNode("values", parent = categoryValue, namespace = c())
+
+            for (j in seq(2, ncol(categoriesValues))) {
+              value <- newXMLNode("value", parent = values, namespace = c())
+              newXMLNode("real", categoriesValues[i, j], parent = value, namespace = c())
+            }
+          }
         })
         if (inherits(tmpErr, "try-error")) {
           err2 <- "Impossible to put (a) value(s) in a <categoriesValues>."
