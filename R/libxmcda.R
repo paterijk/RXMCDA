@@ -2581,8 +2581,7 @@ putAlternativesAffectations <- function (tree, alternativesAffectations,
             upperBound <- newXMLNode("upperBound", parent = interval, namespace = c())
             newXMLNode("categoryID", categoriesIDs[firstTrue], parent = lowerBound, namespace = c())
             newXMLNode("categoryID", categoriesIDs[lastTrue], parent = upperBound, namespace = c())
-          }
-          else {
+          } else {
             categoriesSet <- newXMLNode("categoriesSet", parent = altAffectation, namespace = c())
             for (j in trueIndices) {
               newXMLNode("categoryID", categoriesIDs[j], parent = categoriesSet, namespace = c())
@@ -2591,7 +2590,65 @@ putAlternativesAffectations <- function (tree, alternativesAffectations,
         } 
       })
       if (inherits(tmpErr, "try-error")) {
-        err2 <- "Impossible to put (a) value(s) in a <alternativesValues>."
+        err2 <- "Impossible to put (a) value(s) in a <alternativesAffectations>."
+        break
+      }
+    }
+  }
+  if (!is.null(err1) | (!is.null(err2))) {
+    out <- c(out, list(status = c(err1, err2)))
+  }
+  else {
+    out <- c(out, list(status = "OK"))
+  }
+  return(out)
+}
+
+putAlternativesAffectationsWithValues <- function (tree, alternativesAffectations, 
+                                         alternativesIDs, categoriesIDs,
+                                         mcdaConcept = NULL) {
+  out <- list()
+  err1 <- NULL
+  err2 <- NULL
+  root <- NULL
+  tmpErr <- try({
+    root <- xmlRoot(tree)
+  })
+  if (inherits(tmpErr, "try-error")) {
+    err1 <- "No <xmcda:XMCDA> found."
+  }
+  if (length(root) != 0) {
+    if (!is.null(mcdaConcept)) {
+      alternativesAffectationsNode <- newXMLNode("alternativesAffectations",
+                                                 attrs = c(mcdaConcept = mcdaConcept), 
+                                                 parent = root,
+                                                 namespace = c())
+    }
+    else {
+      alternativesAffectationsNode <- newXMLNode("alternativesAffectations",
+                                                 parent = root,
+                                                 namespace = c())
+    }
+    
+    for (i in 1:nrow(alternativesAffectations)) {
+      alternativeIndex <- alternativesAffectations[i, 1]
+      categoryIndex <- alternativesAffectations[i, 2]
+      value <- alternativesAffectations[i, 3]
+      
+      tmpErr <- try({
+        altAffectation <- newXMLNode("alternativeAffectation",
+                                     parent = alternativesAffectationsNode,
+                                     namespace = c())
+        newXMLNode("alternativeID", alternativesIDs[alternativeIndex],
+                   parent = altAffectation, namespace = c())
+        newXMLNode("categoryID", categoriesIDs[categoryIndex],
+                   parent = altAffectation, namespace = c())
+        valueNode <- newXMLNode("value", parent = altAffectation, namespace = c())
+        newXMLNode("real", value, parent = valueNode, namespace = c())
+      })
+      if (inherits(tmpErr, "try-error")) {
+        err2 <- "Impossible to put (a) value(s) in a <alternativesAffectations>."
+        break
       }
     }
   }
@@ -2638,7 +2695,7 @@ putCategoriesValues <- function (tree, categoriesValues, categoriesIDs,
           newXMLNode("real", categoriesValues[i, 2], parent = value, namespace=c())
         })
         if (inherits(tmpErr, "try-error")) {
-          err2 <- "Impossible to put (a) value(s) in a <alternativesValues>."
+          err2 <- "Impossible to put (a) value(s) in a <categoriesValues>."
         }
       }
     }
