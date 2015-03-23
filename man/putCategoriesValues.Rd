@@ -13,8 +13,8 @@ putCategoriesValues(tree, categoriesValues, categoriesIDs,
 \arguments{
   \item{tree}{Object containing the \code{XMCDA} XML tree.}
   \item{categoriesValues}{A matrix representing a \code{<categoriesValues>}. 
-  Each line of each matrix corresponds to an element of the type "the value assigned to category c1 is x". 
-  A line is structured as follows: the first element encodes the index of the ID of category c1 in \code{categoriesIDs}, the second element encodes the value x.
+  Each line of each matrix corresponds to an element of the type "the value(s) assigned to category c1 is (are) x (x1, x2, ...)". 
+  A line is structured as follows: the first element encodes the index of the ID of category c1 in \code{categoriesIDs}, next elements encodes the values x1, x2...
   These elements are named according to the \code{mcdaConcept} attribute if it can be found.}
   \item{categoriesIDs}{A vector containing the categories' IDs.}
   \item{mcdaConcept}{A string containing the specific \code{mcdaConcept} attribute which should be written.}

@@ -35,7 +35,7 @@ export(
        "checkXSD",
        "getCriteriaComparisonsLabels",
        "putAlternativeValue",
-       "putAlternativesComparisonsLabels", 
+       "putAlternativesComparisonsLabels",
        "putCapacity",
        "getMobiusCapacities",
        "putPerformanceTable",
@@ -46,10 +46,8 @@ export(
        "putCategoriesIntervalValues",
        "getAlternativesAffectations",
        "putAlternativesAffectations",
+       "putAlternativesAffectationsWithValues",
        "getAlternativesComparisonsValues",
        "putAlternativesIDs",
        "putCriteriaMatrix"
        )
-       
-
-
